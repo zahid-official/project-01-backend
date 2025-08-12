@@ -1,17 +1,21 @@
 {
-  "name": "ph-tour-backend",
+  "name": "wandora-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.14.0",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "typescript": "^5.9.2"
   },
   "dependencies": {
