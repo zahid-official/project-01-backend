@@ -31,60 +31,34 @@ const bootstrap = async () => {
 // Start the application
 bootstrap();
 
-// Unhandled promise rejection
-process.on("unhandledRejection", (error) => {
+// Graceful shutdown handlers
+const handleExit = (signal: string, error?: unknown) => {
+  const errorPayload = error ? { error } : {};
+
   console.error({
-    message: "Unhandled rejection detected. Server shutting down...",
-    error,
+    message: `${signal} received. Server shutting down...`,
+    ...errorPayload,
   });
 
   if (server) {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
+};
 
-  process.exit(1);
+// Unhandled promise rejection
+process.on("unhandledRejection", (error) => {
+  handleExit("Unhandled Rejection", error);
 });
 
 // Uncaught exception
 process.on("uncaughtException", (error) => {
-  console.error({
-    message: "Uncaught exception detected. Server shutting down...",
-    error,
-  });
-
-  if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
-  }
-
-  process.exit(1);
+  handleExit("Uncaught Exception", error);
 });
 
 // Server termination signals
-process.on("SIGTERM", () => {
-  console.error("SIGTERM signal received. Server shutting down...");
-
-  if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
-  }
-
-  process.exit(1);
-});
-
-// Manually terminate the server
-process.on("SIGINT", () => {
-  console.error("SIGINT signal received. Server shutting down...");
-
-  if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
-  }
-
-  process.exit(1);
-});
+process.on("SIGTERM", () => handleExit("SIGTERM"));
+process.on("SIGINT", () => handleExit("SIGINT"));
