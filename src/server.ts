@@ -1,20 +1,18 @@
 /* eslint-disable no-console */
 
-import "dotenv/config";
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
+import envVars from "./app/config/env";
 
 let server: Server;
-const port = process.env.PORT || 3000;
+const port = envVars.PORT || 3000;
 
 // Bootstrap the application
 const bootstrap = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster1.rjxsn.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster1`
-    );
+    await mongoose.connect(envVars.DB_URL);
     console.log("Successfully connected to MongoDB using Mongoose");
 
     // Start the server
