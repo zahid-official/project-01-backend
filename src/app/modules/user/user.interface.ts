@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 // Defines user roles
-enum Role {
+export enum Role {
   SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
   USER = "USER",
@@ -9,14 +9,14 @@ enum Role {
 }
 
 // Describes account status
-enum AccountStatus {
+export enum AccountStatus {
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
   BLOCKED = "BLOCKED",
 }
 
 // Authentication provider details
-interface AuthProvider {
+export interface IAuthProvider {
   provider: string;
   providerId: string;
 }
@@ -30,10 +30,10 @@ interface IUser {
   address?: string;
   picture?: string;
   accountStatus?: AccountStatus;
-  isDeleted?: string;
-  isVerified?: string; 
+  isDeleted?: boolean;
+  isVerified?: boolean; 
   role: Role;
-  auth: AuthProvider[];
+  auth: IAuthProvider[];
   bookings?: Types.ObjectId[];
   guides?: Types.ObjectId[];
 }
