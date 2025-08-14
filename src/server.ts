@@ -8,7 +8,7 @@ import envVars from "./app/config/env";
 let server: Server;
 const port = envVars.PORT || 3000;
 
-// Bootstrap the application
+// Initialize the application
 const bootstrap = async () => {
   try {
     // Connect to MongoDB
