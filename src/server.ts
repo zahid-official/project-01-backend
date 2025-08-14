@@ -28,16 +28,16 @@ const bootstrap = async () => {
   }
 };
 
-// Start the application
+// Initialize the application
 bootstrap();
 
 // Graceful shutdown handlers
 const handleExit = (signal: string, error?: unknown) => {
-  const errorPayload = error ? { error } : {};
+  const errorInfo = error ? { error } : {};
 
   console.error({
     message: `${signal} received. Server shutting down...`,
-    ...errorPayload,
+    ...errorInfo,
   });
 
   if (server) {
@@ -59,6 +59,6 @@ process.on("uncaughtException", (error) => {
   handleExit("Uncaught Exception", error);
 });
 
-// Server termination signals
+// Process termination signals
 process.on("SIGTERM", () => handleExit("SIGTERM"));
 process.on("SIGINT", () => handleExit("SIGINT"));

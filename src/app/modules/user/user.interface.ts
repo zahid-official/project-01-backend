@@ -22,7 +22,7 @@ export interface IAuthProvider {
 }
 
 // User profile structure
-interface IUser {
+export interface IUser {
   name: string;
   email: string;
   password?: string;
@@ -31,11 +31,9 @@ interface IUser {
   picture?: string;
   accountStatus?: AccountStatus;
   isDeleted?: boolean;
-  isVerified?: boolean; 
+  isVerified?: boolean;
   role: Role;
   auth: IAuthProvider[];
   bookings?: Types.ObjectId[];
   guides?: Types.ObjectId[];
 }
-
-export default IUser;
