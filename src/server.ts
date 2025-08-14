@@ -8,7 +8,7 @@ import envVars from "./app/config/env";
 let server: Server;
 const port = envVars.PORT || 3000;
 
-// Bootstrap the application
+// Initialize the application
 const bootstrap = async () => {
   try {
     // Connect to MongoDB
@@ -33,11 +33,11 @@ bootstrap();
 
 // Graceful shutdown handlers
 const handleExit = (signal: string, error?: unknown) => {
-  const errorPayload = error ? { error } : {};
+  const errorInfo = error ? { error } : {};
 
   console.error({
     message: `${signal} received. Server shutting down...`,
-    ...errorPayload,
+    ...errorInfo,
   });
 
   if (server) {
@@ -59,6 +59,6 @@ process.on("uncaughtException", (error) => {
   handleExit("Uncaught Exception", error);
 });
 
-// Server termination signals
+// Process termination signals
 process.on("SIGTERM", () => handleExit("SIGTERM"));
 process.on("SIGINT", () => handleExit("SIGINT"));
