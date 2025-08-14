@@ -1,10 +1,14 @@
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
+import userRoutes from "./app/modules/user/user.routes";
 import routesErrorHandler from "./app/middlewares/routesErrorHandler";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 
 // Express application
 const app: Application = express();
+
+// routes middleware
+app.use("/user", userRoutes);
 
 // Middleware
 app.use(express.json());
