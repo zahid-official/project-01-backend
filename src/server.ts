@@ -17,7 +17,7 @@ const bootstrap = async () => {
 
     // Start the server
     server = app.listen(port, () => {
-      console.log(`Server running on port ${process.env.port}`);
+      console.log(`Server running on port ${port}`);
     });
   } catch (error) {
     console.error({
