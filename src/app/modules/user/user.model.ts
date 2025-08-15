@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IUser, AccountStatus, IAuthProvider, Role } from "./user.interface";
 
-// Defines auth provider schema
+// Define auth provider schema
 const authProvider = new Schema<IAuthProvider>(
   {
     provider: { type: String, required: true },
@@ -35,5 +35,6 @@ const userSchema = new Schema<IUser>(
   }
 );
 
+// Create mongoose model from user schema
 const User = model<IUser>("User", userSchema, "userCollection");
 export default User;
