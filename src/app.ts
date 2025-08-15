@@ -7,12 +7,12 @@ import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 // Express application
 const app: Application = express();
 
-// routes middleware
-app.use("/api/v1/user", userRoutes);
-
 // Middleware
 app.use(express.json());
 app.use(cors());
+
+// routes middleware
+app.use("/api/v1/user", userRoutes);
 
 // Root route
 app.get("/", (req: Request, res: Response) => {
