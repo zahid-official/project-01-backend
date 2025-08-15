@@ -8,7 +8,7 @@ import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 const app: Application = express();
 
 // routes middleware
-app.use("/user", userRoutes);
+app.use("/api/v1/user", userRoutes);
 
 // Middleware
 app.use(express.json());
