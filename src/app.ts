@@ -1,8 +1,8 @@
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
-import userRoutes from "./app/modules/user/user.routes";
 import routesErrorHandler from "./app/middlewares/routesErrorHandler";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import moduleRouter from "./app/routes";
 
 // Express application
 const app: Application = express();
@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // routes middleware
-app.use("/api/v1/user", userRoutes);
+app.use("/api/v1", moduleRouter);
 
 // Root route
 app.get("/", (req: Request, res: Response) => {
