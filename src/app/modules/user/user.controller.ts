@@ -6,17 +6,16 @@ import httpStatus from "http-status-codes";
 // Create new user
 const createUser = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
-    // const { name, email } = req.body;
-    // const result = await User.create({
-    //   name,
-    //   email,
-    // });
+    const { name, email } = req.body;
+    const result = await User.create({
+      name,
+      email,
+    });
 
-    // res.status(httpStatus.CREATED).json({
-    //   message: "User created successfully",
-    //   data: result,
-    // });
+    res.status(httpStatus.CREATED).json({
+      message: "User created successfully",
+      data: result,
+    });
   } catch (error: any) {
     res.status(httpStatus.BAD_REQUEST).json({
       message: error.message ?? "Something went wrong!!",
