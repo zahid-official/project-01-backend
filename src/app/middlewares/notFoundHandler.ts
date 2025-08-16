@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status-codes";
 
-const routesErrorHandler = (req: Request, res: Response) => {
+const notFoundHandler = (req: Request, res: Response) => {
   res.status(httpStatus.NOT_FOUND).json({
+    success: false,
     message: "Route not found",
     error: {
       name: "404 Not found",
@@ -13,4 +14,4 @@ const routesErrorHandler = (req: Request, res: Response) => {
   });
 };
 
-export default routesErrorHandler;
+export default notFoundHandler;

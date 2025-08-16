@@ -1,6 +1,6 @@
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
-import routesErrorHandler from "./app/middlewares/routesErrorHandler";
+import notFoundHandler from "./app/middlewares/notFoundHandler";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import moduleRouter from "./app/routes";
 
@@ -19,10 +19,10 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to the Wandora Server");
 });
 
-// Handle routes error
-app.use(routesErrorHandler);
-
 // Handle global error
 app.use(globalErrorHandler);
+
+// Handle not found
+app.use(notFoundHandler);
 
 export default app;
