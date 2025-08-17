@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import userService from "./user.service";
 
 // Create new user
-const createUser = async (req: Request, res: Response) => {
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await userService.registerUser(req?.body);
 
@@ -13,10 +13,7 @@ const createUser = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(httpStatus.BAD_REQUEST).json({
-      message: error.message ?? "Something went wrong!!",
-      error: error,
-    });
+    next(error);
   }
 };
 
