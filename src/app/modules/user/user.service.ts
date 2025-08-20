@@ -15,7 +15,11 @@ const registerUser = async (payload: Partial<IUser>) => {
 // Retrieve all users
 const retrieveAllUsers = async () => {
   const users = await User.find();
-  return users;
+  const totalUsers = await User.countDocuments();
+  return {
+    data: users,
+    meta: { total: totalUsers },
+  };
 };
 
 // User service object
