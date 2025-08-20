@@ -3,7 +3,10 @@ import userController from "./user.controller";
 
 const router = Router();
 
-// Register user
+// Get all users
+router.get("/", userController.getAllUsers);
+
+// Create new user
 router.post("/register", userController.createUser);
 
 // Export user routes

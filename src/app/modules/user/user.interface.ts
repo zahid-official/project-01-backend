@@ -8,20 +8,20 @@ export enum Role {
   GUIDE = "GUIDE",
 }
 
-// Describes account status
+// Defines account status
 export enum AccountStatus {
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
   BLOCKED = "BLOCKED",
 }
 
-// Authentication provider details
+// Defines authentication provider interface
 export interface IAuthProvider {
   provider: string;
   providerId: string;
 }
 
-// User profile structure
+// User interface definition
 export interface IUser {
   name: string;
   email: string;
