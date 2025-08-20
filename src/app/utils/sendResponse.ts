@@ -17,7 +17,7 @@ const sendResponse = <T> (res: Response, payload: IResponse<T>) => {
     success: payload.success,
     message: payload.message,
     data: payload.data,
-    meta: payload.meta,f
+    meta: payload.meta,
   });
 };
 
