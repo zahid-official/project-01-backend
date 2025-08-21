@@ -15,12 +15,13 @@ const bootstrap = async () => {
     await mongoose.connect(envVars.DB_URL);
     console.log("Successfully connected to MongoDB using Mongoose");
 
-    // Start the server
+    // Start the express server
     server = app.listen(port, () => {
       console.log(`Server running on port ${process.env.port}`);
     });
   } catch (error) {
     console.error({
+      success: false,
       message: "MongoDB connection failed",
       error,
     });
