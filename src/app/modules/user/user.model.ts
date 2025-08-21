@@ -27,7 +27,7 @@ const userSchema = new Schema<IUser>(
     isDeleted: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     role: { type: String, enum: Object.values(Role), default: Role.USER },
-    auth: [authProvider],
+    auths: [authProvider],
   },
   {
     versionKey: false,
