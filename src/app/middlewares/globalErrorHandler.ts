@@ -3,6 +3,7 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import envVars from "../config/env";
+import { ZodError } from "zod";
 import AppError from "../errors/AppError";
 
 const globalErrorHandler = (
@@ -19,9 +20,17 @@ const globalErrorHandler = (
   // Default error values
   let statusCode = httpStatus.INTERNAL_SERVER_ERROR;
   let message = "Something went wrong!!";
+  let errorDetails = error;
+
+  // Zod validation error handling
+  if (error instanceof ZodError) {
+    statusCode = httpStatus.BAD_REQUEST;
+    message = "Validation failed";
+    errorDetails = error.issues;
+  }
 
   // Handle custom error
-  if (error instanceof AppError) {
+  else if (error instanceof AppError) {
     statusCode = error.statusCode;
     message = error.message;
   }
@@ -36,8 +45,11 @@ const globalErrorHandler = (
   res.status(statusCode).json({
     success: false,
     message,
-    error,
-    stack: envVars.NODE_ENV === "development" ? error.stack : null,
+    error: errorDetails,
+    stack:
+      envVars.NODE_ENV === "development"
+        ? error.stack?.split("\n").map((line: any) => line.trim())
+        : null,
   });
 };
 
