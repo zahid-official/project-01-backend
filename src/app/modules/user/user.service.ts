@@ -1,5 +1,32 @@
-import { IUser } from "./user.interface";
+import AppError from "../../errors/AppError";
+import { IAuthProvider, IUser } from "./user.interface";
 import User from "./user.model";
+import httpStatus from "http-status-codes";
+
+// Register new user
+const registerUser = async (payload: Partial<IUser>) => {
+  const { email, ...rest } = payload;
+
+  // Check if user already exists
+  const isUserExists = await User.findOne({ email });
+  if (isUserExists) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "User already exists with this email"
+    );
+  }
+
+  // Authentication provider
+  const authProvider: IAuthProvider = {
+    provider: "credentials",
+    providerId: email as string, // Using email as providerId for credentials
+  };
+
+  
+  // Create new user
+  const user = await User.create({ email, auths: [authProvider], ...rest });
+  return user;
+};
 
 // Retrieve all users
 const retrieveAllUsers = async () => {
@@ -9,12 +36,6 @@ const retrieveAllUsers = async () => {
     data: users,
     meta: { total: totalUsers },
   };
-};
-
-// Register new user
-const registerUser = async (payload: Partial<IUser>) => {
-  const user = await User.create(payload);
-  return user;
 };
 
 // User service object

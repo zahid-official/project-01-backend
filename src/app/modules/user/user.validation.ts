@@ -1,7 +1,7 @@
 import z from "zod";
 import { AccountStatus, Role } from "./user.interface";
 
-// zod scheme for new user creation
+// Zod scheme for new user creation
 export const createUserZodSchema = z.object({
   // Name
   name: z
@@ -62,7 +62,7 @@ export const createUserZodSchema = z.object({
     .optional(),
 });
 
-// zod scheme for updating user data
+// Zod scheme for updating user data
 export const updateUserZodSchema = z.object({
   // Name
   name: z
@@ -104,13 +104,15 @@ export const updateUserZodSchema = z.object({
     .optional(),
 
   // Role
-  role: z
-    // .enum(["ADMIN", "GUIDE", "USER", "SUPER_ADMIN"])
-    .enum(Object.values(Role) as [string])
-    .optional(),
+  role: z.enum(Object.values(Role) as [string]).optional(),
 
+  // Account status
   accountStatus: z.enum(Object.values(AccountStatus) as [string]).optional(),
+
+  // Delete status
   isDeleted: z.boolean({ error: "isDeleted must be true or false" }).optional(),
+
+  // Verification status
   isVerified: z
     .boolean({ error: "isVerified must be true or false" })
     .optional(),
