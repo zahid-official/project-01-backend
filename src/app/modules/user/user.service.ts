@@ -2,10 +2,11 @@ import AppError from "../../errors/AppError";
 import { IAuthProvider, IUser } from "./user.interface";
 import User from "./user.model";
 import httpStatus from "http-status-codes";
+import bcrypt from "bcryptjs";
 
 // Register new user
 const registerUser = async (payload: Partial<IUser>) => {
-  const { email, ...rest } = payload;
+  const { email, password, ...rest } = payload;
 
   // Check if user already exists
   const isUserExists = await User.findOne({ email });
@@ -16,15 +17,22 @@ const registerUser = async (payload: Partial<IUser>) => {
     );
   }
 
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password as string, 10);
+
   // Authentication provider
   const authProvider: IAuthProvider = {
     provider: "credentials",
     providerId: email as string, // Using email as providerId for credentials
   };
 
-  
   // Create new user
-  const user = await User.create({ email, auths: [authProvider], ...rest });
+  const user = await User.create({
+    email,
+    password: hashedPassword,
+    auths: [authProvider],
+    ...rest,
+  });
   return user;
 };
 
