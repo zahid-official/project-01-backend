@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 
 // Register new user
 const registerUser = async (payload: Partial<IUser>) => {
-  const { email, password, ...rest } = payload;
+  const { email, password, ...rest } = payload || {};
 
   // Check if user already exists
   const isUserExists = await User.findOne({ email });
