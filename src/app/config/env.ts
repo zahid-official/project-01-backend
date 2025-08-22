@@ -10,6 +10,8 @@ const loadEnvs = (): EnvConfig => {
     "JWT_SECRET",
     "JWT_EXPIRESIN",
     "BCRYPT_SALT_ROUNDS",
+    "SUPER_ADMIN_EMAIL",
+    "SUPER_ADMIN_PASSWORD",
   ];
   requiredEnvs.forEach((key) => {
     if (!process.env[key]) {
@@ -25,6 +27,8 @@ const loadEnvs = (): EnvConfig => {
     JWT_SECRET: process.env.JWT_SECRET as string,
     JWT_EXPIRESIN: process.env.JWT_EXPIRESIN as string,
     BCRYPT_SALT_ROUNDS: process.env.BCRYPT_SALT_ROUNDS as string,
+    SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
+    SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
   };
 };
 

@@ -5,6 +5,8 @@ interface EnvConfig {
   JWT_SECRET: string;
   JWT_EXPIRESIN: string;
   BCRYPT_SALT_ROUNDS: string;
+  SUPER_ADMIN_EMAIL: string;
+  SUPER_ADMIN_PASSWORD: string;
 }
 
 export default EnvConfig;

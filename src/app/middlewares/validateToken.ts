@@ -4,10 +4,10 @@ import AppError from "../errors/AppError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import envVars from "../config/env";
 import catchAsync from "../utils/catchAsync";
-import { Role } from "../modules/user/user.interface";
 
-const validateToken = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+// It's a high-order function that returns a middleware function
+const validateToken = (...userRoles: string[]) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
 
     // Check if token is provided
@@ -22,10 +22,7 @@ const validateToken = catchAsync(
     const verifiedToken = jwt.verify(token, envVars.JWT_SECRET) as JwtPayload;
 
     // Check if user has permission to access
-    if (
-      verifiedToken.role !== Role.ADMIN &&
-      verifiedToken.role !== Role.SUPER_ADMIN
-    ) {
+    if (!userRoles.includes(verifiedToken.role)) {
       throw new AppError(
         httpStatus.FORBIDDEN,
         "You do not have permission to access this resource"
@@ -33,7 +30,6 @@ const validateToken = catchAsync(
     }
 
     next();
-  }
-);
+  });
 
 export default validateToken;
