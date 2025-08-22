@@ -3,6 +3,7 @@ import { IUser } from "../user/user.interface";
 import User from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // login by email
 const loginByEmail = async (payload: IUser) => {
@@ -25,7 +26,19 @@ const loginByEmail = async (payload: IUser) => {
     throw new AppError(httpStatus.UNAUTHORIZED, "Invalid email or password");
   }
 
-  return { email: user?.email };
+  // JWT token payload
+  const jwtPayload = {
+    id: user._id,
+    email: user.email,
+    role: user.role,
+  };
+
+  // JWT token generation
+  const token = jwt.sign(jwtPayload, process.env.JWT_SECRET as string, {
+    expiresIn: "1h",
+  });
+
+  return { token };
 };
 
 // Auth service object
