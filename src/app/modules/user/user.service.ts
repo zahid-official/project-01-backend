@@ -3,6 +3,7 @@ import { IAuthProvider, IUser } from "./user.interface";
 import User from "./user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
+import envVars from "../../config/env";
 
 // Register new user
 const registerUser = async (payload: Partial<IUser>) => {
@@ -18,7 +19,10 @@ const registerUser = async (payload: Partial<IUser>) => {
   }
 
   // Hash the password
-  const hashedPassword = await bcrypt.hash(password as string, 10);
+  const hashedPassword = await bcrypt.hash(
+    password as string,
+    parseInt(envVars.BCRYPT_SALT_ROUNDS)
+  );
 
   // Authentication provider
   const authProvider: IAuthProvider = {

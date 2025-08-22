@@ -2,11 +2,12 @@ import { Router } from "express";
 import userController from "./user.controller";
 import { createUserZodSchema } from "./user.validation";
 import validateUserData from "../../middlewares/validateUserData";
+import validateToken from "../../middlewares/validateToken";
 
 const router = Router();
 
 // Get all users
-router.get("/", userController.getAllUsers);
+router.get("/", validateToken, userController.getAllUsers);
 
 // Create new user
 router.post(

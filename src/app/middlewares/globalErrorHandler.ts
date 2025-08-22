@@ -29,6 +29,15 @@ const globalErrorHandler = (
     errorDetails = error.issues;
   }
 
+  // JWT error handling
+  else if (
+    error.name === "JsonWebTokenError" ||
+    error.name === "TokenExpiredError"
+  ) {
+    statusCode = httpStatus.UNAUTHORIZED;
+    message = error.message;
+  }
+
   // Handle custom error
   else if (error instanceof AppError) {
     statusCode = error.statusCode;

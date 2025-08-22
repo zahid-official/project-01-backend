@@ -3,7 +3,7 @@ import { IUser } from "../user/user.interface";
 import User from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import generateJWT from "../../utils/generateJWT";
 
 // login by email
 const loginByEmail = async (payload: IUser) => {
@@ -33,11 +33,8 @@ const loginByEmail = async (payload: IUser) => {
     role: user.role,
   };
 
-  // JWT token generation
-  const token = jwt.sign(jwtPayload, process.env.JWT_SECRET as string, {
-    expiresIn: "1h",
-  });
-
+  // Generate JWT token
+  const token = generateJWT(jwtPayload);
   return { token };
 };
 
