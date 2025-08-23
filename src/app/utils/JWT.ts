@@ -4,8 +4,8 @@ import envVars from "../config/env";
 
 // Generate JWT
 const generateJWT = (payload: JwtPayload) => {
-  const token = jwt.sign(payload, envVars.JWT_SECRET, {
-    expiresIn: envVars.JWT_EXPIRESIN,
+  const token = jwt.sign(payload, envVars.JWT_ACCESS_SECRET, {
+    expiresIn: envVars.JWT_ACCESS_EXPIRESIN,
   } as SignOptions);
 
   return token;

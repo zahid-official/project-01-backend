@@ -19,7 +19,7 @@ const validateToken = (...userRoles: string[]) =>
     }
 
     // Verify & decode the token
-    const verifiedToken = jwt.verify(token, envVars.JWT_SECRET) as JwtPayload;
+    const verifiedToken = jwt.verify(token, envVars.JWT_ACCESS_SECRET) as JwtPayload;
 
     // Check if user has permission to access
     if (!userRoles.includes(verifiedToken.role)) {
