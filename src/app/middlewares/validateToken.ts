@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import AppError from "../errors/AppError";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import envVars from "../config/env";
 import catchAsync from "../utils/catchAsync";
+import { verifyJWT } from "../utils/JWT";
 
 // It's a high-order function that returns a middleware function
 const validateToken = (...userRoles: string[]) =>
@@ -18,8 +19,8 @@ const validateToken = (...userRoles: string[]) =>
       );
     }
 
-    // Verify the token
-    const verifiedToken = jwt.verify(token, envVars.JWT_SECRET) as JwtPayload;
+    // Verify & decode the token
+    const verifiedToken = verifyJWT(token, envVars.JWT_SECRET) as JwtPayload;
 
     // Check if user has permission to access
     if (!userRoles.includes(verifiedToken.role)) {

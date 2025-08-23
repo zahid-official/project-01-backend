@@ -3,7 +3,7 @@ import { IUser } from "../user/user.interface";
 import User from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
-import generateJWT from "../../utils/generateJWT";
+import { generateJWT } from "../../utils/JWT";
 
 // login by email
 const loginByEmail = async (payload: IUser) => {

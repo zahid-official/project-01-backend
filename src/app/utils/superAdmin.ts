@@ -12,7 +12,7 @@ const superAdmin = async () => {
       email: envVars.SUPER_ADMIN_EMAIL,
     });
     if (isSuperAdminExist) {
-      return console.log("Super admin already exists");
+      return;
     }
 
     // Auth provider
