@@ -11,10 +11,4 @@ const generateJWT = (payload: JwtPayload) => {
   return token;
 };
 
-// Verfiy & decode JWT
-const verifyJWT = (token: string, secret: string) => {
-  const verifiedToken = jwt.verify(token, secret);
-  return verifiedToken;
-};
-
-export { generateJWT, verifyJWT };
+export { generateJWT };
