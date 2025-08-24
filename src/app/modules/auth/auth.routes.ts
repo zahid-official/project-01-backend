@@ -5,6 +5,7 @@ const router = Router();
 
 // Login with credentials
 router.post("/login", authController.credentialsLogin);
+router.post("/regenerate-token", authController.regenerateToken);
 
 // Export auth routes
 const authRoutes = router;
