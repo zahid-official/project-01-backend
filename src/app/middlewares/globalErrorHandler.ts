@@ -4,7 +4,6 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import envVars from "../config/env";
 import { ZodError } from "zod";
-import AppError from "../errors/AppError";
 
 const globalErrorHandler = (
   error: any,
@@ -18,8 +17,8 @@ const globalErrorHandler = (
   }
 
   // Default error values
-  let statusCode = httpStatus.INTERNAL_SERVER_ERROR;
-  let message = "Something went wrong!!";
+  let statusCode = error.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
+  let message = error.message || "Something went wrong!!";
   let errorDetails = error;
 
   // Zod validation error handling
@@ -29,15 +28,12 @@ const globalErrorHandler = (
     errorDetails = error.issues;
   }
 
-  // Handle custom error
-  else if (error instanceof AppError) {
-    statusCode = error.statusCode;
-    message = error.message;
-  }
-
-  // Handle built-in Error
-  else if (error instanceof Error) {
-    statusCode = httpStatus.INTERNAL_SERVER_ERROR;
+  // JWT error handling
+  else if (
+    error.name === "JsonWebTokenError" ||
+    error.name === "TokenExpiredError"
+  ) {
+    statusCode = httpStatus.UNAUTHORIZED;
     message = error.message;
   }
 

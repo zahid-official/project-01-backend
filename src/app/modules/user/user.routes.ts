@@ -1,18 +1,32 @@
 import { Router } from "express";
 import userController from "./user.controller";
-import { validateUserData } from "../../middlewares/validateUserData";
-import { createUserZodSchema } from "./user.validation";
+import { createUserZodSchema, updateUserZodSchema } from "./user.validation";
+import validateUserData from "../../middlewares/validateUserData";
+import validateToken from "../../middlewares/validateToken";
+import { Role } from "./user.interface";
 
 const router = Router();
-
-// Get all users
-router.get("/", userController.getAllUsers);
 
 // Create new user
 router.post(
   "/register",
   validateUserData(createUserZodSchema),
   userController.createUser
+);
+
+// Get all users
+router.get(
+  "/",
+  validateToken(Role.ADMIN, Role.SUPER_ADMIN),
+  userController.getAllUsers
+);
+
+// Update user
+router.patch(
+  "/:id",
+  validateToken(...Object.values(Role)),
+  validateUserData(updateUserZodSchema),
+  userController.updateUser
 );
 
 // Export user routes
