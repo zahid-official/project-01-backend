@@ -5,24 +5,17 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import authService from "./auth.service";
+import setCookies from "../../utils/setCookies";
 
 // Credentials login
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const result = await authService.loginByEmail(req?.body);
 
-    // Set access token in cookies
-    res.cookie("accessToken", result.accessToken, {
-      httpOnly: true,
-      secure: false,
-    });
+    // Set token in cookies
+    setCookies(res, result);
 
-    // Set refresh token in cookies
-    res.cookie("refreshToken", result.refreshToken, {
-      httpOnly: true,
-      secure: false,
-    });
-
+    // Send response
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
@@ -38,12 +31,10 @@ const regenerateToken = catchAsync(
     const refreshToken = req.cookies.refreshToken;
     const result = await authService.renewAccessToken(refreshToken);
 
-    // Set access token in cookies
-    res.cookie("accessToken", result.accessToken, {
-      httpOnly: true,
-      secure: false,
-    });
+    // Set token in cookies
+    setCookies(res, result);
 
+    // Send response
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
