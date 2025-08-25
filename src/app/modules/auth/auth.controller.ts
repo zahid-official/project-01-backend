@@ -60,7 +60,34 @@ const logout = catchAsync(
   }
 );
 
+// Reset password
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req?.decodedToken;
+    const { oldPassword, newPassword } = req?.body || {};
+
+    const result = await authService.changePassword(
+      decodedToken,
+      oldPassword,
+      newPassword
+    );
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password reset successful",
+      data: result,
+    });
+  }
+);
+
 // Auth controller object
-const authController = { credentialsLogin, regenerateToken, logout };
+const authController = {
+  credentialsLogin,
+  regenerateToken,
+  logout,
+  resetPassword,
+};
 
 export default authController;

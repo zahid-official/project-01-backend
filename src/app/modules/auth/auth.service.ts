@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import AppError from "../../errors/AppError";
 import { AccountStatus, IUser } from "../user/user.interface";
 import User from "../user/user.model";
@@ -88,10 +90,40 @@ const renewAccessToken = async (refreshToken: string) => {
   return { accessToken };
 };
 
+// Change password
+const changePassword = async (
+  decodedToken: JwtPayload,
+  oldPassword: string,
+  newPassword: string
+) => {
+  const user = await User.findById(decodedToken?.userId);
+
+  // Compare old password with database stored password
+  const isPasswordMatch = await bcrypt.compare(
+    oldPassword,
+    user!.password as string
+  );
+
+  // Check if old password matches
+  if (!isPasswordMatch) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Old password is incorrect");
+  }
+
+  // Hash the new password and save to database
+  user!.password = await bcrypt.hash(
+    newPassword,
+    parseInt(envVars.BCRYPT_SALT_ROUNDS)
+  );
+  user!.save();
+
+  return null;
+};
+
 // Auth service object
 const authService = {
   loginByEmail,
   renewAccessToken,
+  changePassword,
 };
 
 export default authService;

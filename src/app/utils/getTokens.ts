@@ -6,7 +6,7 @@ import { generateJWT } from "./JWT";
 const getTokens = (user: Partial<IUser>) => {
   // Payload
   const jwtPayload = {
-    id: user._id,
+    userId: user._id,
     email: user.email,
     role: user.role,
   };
@@ -32,7 +32,7 @@ const getTokens = (user: Partial<IUser>) => {
 export const recreateToken = (user: Partial<IUser>) => {
   // Payload
   const jwtPayload = {
-    id: user._id,
+    userId: user._id,
     email: user.email,
     role: user.role,
   };
