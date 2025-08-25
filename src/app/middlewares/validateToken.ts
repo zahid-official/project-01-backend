@@ -9,13 +9,13 @@ import { JwtPayload } from "jsonwebtoken";
 // It's a high-order function that returns a middleware function
 const validateToken = (...userRoles: string[]) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const accessToken = req.headers.authorization;
+    const accessToken = req.cookies.accessToken;
 
     // Check if access token is provided
     if (!accessToken) {
       throw new AppError(
         httpStatus.UNAUTHORIZED,
-        "No token provided, authorization denied"
+        "No access token provided, authorization denied"
       );
     }
 

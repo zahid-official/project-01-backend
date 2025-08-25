@@ -3,8 +3,8 @@ import { AccountStatus, IUser } from "../user/user.interface";
 import User from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
-import getTokens from "../../utils/getTokens";
-import { generateJWT, verifyJWT } from "../../utils/JWT";
+import getTokens, { recreateToken } from "../../utils/getTokens";
+import { verifyJWT } from "../../utils/JWT";
 import envVars from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -45,6 +45,14 @@ const loginByEmail = async (payload: IUser) => {
 
 // Renew access token using refresh token
 const renewAccessToken = async (refreshToken: string) => {
+  // Check if refresh token is provided
+  if (!refreshToken) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "No refresh token provided, authorization denied"
+    );
+  }
+
   const verifiedRefreshToken = verifyJWT(
     refreshToken,
     envVars.JWT_REFRESH_SECRET
@@ -74,19 +82,8 @@ const renewAccessToken = async (refreshToken: string) => {
     throw new AppError(httpStatus.UNAUTHORIZED, "User is deleted");
   }
 
-  // Payload
-  const jwtPayload = {
-    id: user._id,
-    email: user.email,
-    role: user.role,
-  };
-
-  // Generate JWT access token
-  const accessToken = generateJWT(
-    jwtPayload,
-    envVars.JWT_ACCESS_SECRET,
-    envVars.JWT_ACCESS_EXPIRESIN
-  );
+  // Recrete JWT access token
+  const accessToken = recreateToken(user);
 
   return { accessToken };
 };

@@ -27,7 +27,7 @@ const credentialsLogin = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: "Login successful",
-      data: result,
+      data: result.data,
     });
   }
 );
@@ -36,13 +36,19 @@ const credentialsLogin = catchAsync(
 const regenerateToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
-
     const result = await authService.renewAccessToken(refreshToken);
+
+    // Set access token in cookies
+    res.cookie("accessToken", result.accessToken, {
+      httpOnly: true,
+      secure: false,
+    });
+
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "Access token regenerated successfully",
-      data: result,
+      data: null,
     });
   }
 );
