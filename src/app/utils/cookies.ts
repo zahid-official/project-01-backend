@@ -5,6 +5,7 @@ interface AuthTokens {
   refreshToken?: string;
 }
 
+// Set tokens in cookies
 const setCookies = (res: Response, tokenInfo: AuthTokens) => {
   // Set access token in cookies
   if (tokenInfo.accessToken) {
@@ -23,4 +24,21 @@ const setCookies = (res: Response, tokenInfo: AuthTokens) => {
   }
 };
 
-export default setCookies;
+// Clear tokens from cookies
+const clearCookies = (res: Response) => {
+  // Clear access token
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+
+  // Clear refresh token
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+};
+
+export { setCookies, clearCookies };
