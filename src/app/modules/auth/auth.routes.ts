@@ -7,7 +7,7 @@ import validateUserData from "../../middlewares/validateUserData";
 
 const router = Router();
 
-// Login with credentials
+// Post routes
 router.post("/login", authController.credentialsLogin);
 router.post("/regenerate-token", authController.regenerateToken);
 router.post("/logout", authController.logout);
