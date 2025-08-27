@@ -10,7 +10,7 @@ import { verifyJWT } from "../../utils/JWT";
 import envVars from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 
-// login by email
+// Login by email
 const loginByEmail = async (payload: IUser) => {
   const { email, password } = payload || {};
 
