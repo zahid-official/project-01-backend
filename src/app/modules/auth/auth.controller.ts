@@ -6,6 +6,9 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import authService from "./auth.service";
 import { clearCookies, setCookies } from "../../utils/cookies";
+import AppError from "../../errors/AppError";
+import getTokens from "../../utils/getTokens";
+import envVars from "../../config/env";
 
 // Credentials login
 const credentialsLogin = catchAsync(
@@ -82,12 +85,37 @@ const resetPassword = catchAsync(
   }
 );
 
+// Google callback
+const googleCallback = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    // Check if user exists
+    if (!user) {
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "Google authentication failed"
+      );
+    }
+
+    // Generate tokens
+    const tokens = getTokens(user);
+
+    // Set token in cookies
+    setCookies(res, tokens);
+
+    // Redirect to frontend with tokens
+    res.redirect(`${envVars.FRONTEND_URL}`);
+  }
+);
+
 // Auth controller object
 const authController = {
   credentialsLogin,
   regenerateToken,
   logout,
   resetPassword,
+  googleCallback,
 };
 
 export default authController;

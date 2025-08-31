@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import passport from "passport";
 import {
   Strategy as GoogleStrategy,
@@ -8,6 +10,7 @@ import envVars from "./env";
 import User from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
 
+// Configure Google OAuth strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -55,3 +58,18 @@ passport.use(
     }
   )
 );
+
+// Serialize user
+passport.serializeUser((user: any, done: (error: any, id?: unknown) => void) => {
+  done(null, user._id);
+});
+
+// Deserialize user
+passport.deserializeUser(async (id: string, done: any) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
+});
