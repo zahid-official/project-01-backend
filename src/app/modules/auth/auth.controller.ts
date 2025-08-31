@@ -90,6 +90,12 @@ const googleCallback = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
 
+    // Get redirect from state
+    let redirect = req.query.state ? (req.query.state as string) : "";
+    if (redirect.startsWith("/")) {
+      redirect = redirect.slice(1);
+    }
+
     // Check if user exists
     if (!user) {
       throw new AppError(
@@ -105,7 +111,7 @@ const googleCallback = catchAsync(
     setCookies(res, tokens);
 
     // Redirect to frontend with tokens
-    res.redirect(`${envVars.FRONTEND_URL}`);
+    res.redirect(`${envVars.FRONTEND_URL}/${redirect}`);
   }
 );
 
