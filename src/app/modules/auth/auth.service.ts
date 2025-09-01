@@ -26,7 +26,7 @@ const loginByEmail = async (payload: IUser) => {
     user?.password as string
   );
 
-  // If password does not match, throw error
+  // Check if password matches
   if (!isPasswordMatch) {
     throw new AppError(httpStatus.UNAUTHORIZED, "Invalid email or password");
   }
