@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Router } from "express";
 import authController from "./auth.controller";
 import validateToken from "../../middlewares/validateToken";
 import { Role } from "../user/user.interface";
@@ -20,16 +20,7 @@ router.post(
 );
 
 // Get routes
-router.get(
-  "/google",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const redirect = (req.query.redirect as string) || "/";
-    passport.authenticate("google", {
-      scope: ["profile", "email"],
-      state: redirect,
-    })(req, res, next);
-  }
-);
+router.get("/google", authController.googleLogin);
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
