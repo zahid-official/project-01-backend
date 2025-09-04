@@ -5,6 +5,7 @@ import validateUserData from "../../middlewares/validateUserData";
 import validateToken from "../../middlewares/validateToken";
 import { Role } from "./user.interface";
 
+// Initialize router
 const router = Router();
 
 // Create new user
