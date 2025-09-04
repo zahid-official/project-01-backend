@@ -27,6 +27,13 @@ router.patch(
   tourController.updateTour
 );
 
+// Delete tour
+router.delete(
+  "/:id",
+  validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+  tourController.deleteTour
+);
+
 // Export tour routes
 const tourRoutes = router;
 export default tourRoutes;

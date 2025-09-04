@@ -52,11 +52,24 @@ const updateTour = async (tourId: string, payload: Partial<ITour>) => {
   return modifiedDetails;
 };
 
+// Delete tour
+const deleteTour = async (tourId: string) => {
+  // Check if tour exists
+  const isTourExists = await Tour.findById(tourId);
+  if (!isTourExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "Tour not found");
+  }
+
+  const deletedTour = await Tour.findByIdAndDelete(tourId);
+  return deletedTour;
+};
+
 // Tour service object
 const tourService = {
   getAllTours,
   createTour,
   updateTour,
+  deleteTour,
 };
 
 export default tourService;
