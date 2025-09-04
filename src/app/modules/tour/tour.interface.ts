@@ -16,6 +16,6 @@ export interface ITour {
   excluded?: string[];
   tourPlan?: string[];
   aminities?: string[];
-  division: Types.ObjectId;
-  tourType: Types.ObjectId;
+  divisionId: Types.ObjectId;
+  tourTypeId: Types.ObjectId;
 }

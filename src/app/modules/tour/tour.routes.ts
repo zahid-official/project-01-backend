@@ -8,6 +8,9 @@ import validateSchema from "../../middlewares/validateSchema";
 // Initialize router
 const router = Router();
 
+// Get all divisions
+router.get("/", tourController.getAllTours);
+
 // Create new tour
 router.post(
   "/create",

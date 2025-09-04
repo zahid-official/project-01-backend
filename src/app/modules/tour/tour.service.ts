@@ -3,6 +3,16 @@ import { ITour } from "./tour.interface";
 import httpStatus from "http-status-codes";
 import AppError from "../../errors/AppError";
 
+// Get all tours
+const getAllTours = async () => {
+  const tours = await Tour.find();
+  const totaltours = await Tour.countDocuments();
+  return {
+    data: tours,
+    meta: { total: totaltours },
+  };
+};
+
 // Create new tour
 const createTour = async (payload: ITour) => {
   // Check if tour already exists
@@ -20,6 +30,7 @@ const createTour = async (payload: ITour) => {
 
 // Tour service object
 const tourService = {
+  getAllTours,
   createTour,
 };
 

@@ -90,10 +90,10 @@ export const createTourZodSchema = z.object({
     .optional(),
 
   // Division
-  division: z.string({ error: "Division ID must be a string" }),
+  divisionId: z.string({ error: "Division ID must be a string" }),
 
   // Tour Type
-  tourType: z.string({ error: "Tour Type ID must be a string" }),
+  tourTypeId: z.string({ error: "Tour Type ID must be a string" }),
 });
 
 // Zod scheme for updating tour data
@@ -182,8 +182,8 @@ export const updateTourZodSchema = z.object({
     .optional(),
 
   // Division
-  division: z.string({ error: "Division ID must be a string" }).optional(),
+  divisionId: z.string({ error: "Division ID must be a string" }).optional(),
 
   // Tour Type
-  tourType: z.string({ error: "Tour Type ID must be a string" }).optional(),
+  tourTypeId: z.string({ error: "Tour Type ID must be a string" }).optional(),
 });

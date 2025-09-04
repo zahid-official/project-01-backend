@@ -4,7 +4,7 @@ import { ITour } from "./tour.interface";
 // Mongoose schema definition for tour
 const tourSchema = new Schema<ITour>(
   {
-    title: { type: String, required: true, },
+    title: { type: String, required: true },
     slug: { type: String, unique: true },
     cost: { type: Number },
     minAge: { type: Number },
@@ -18,8 +18,16 @@ const tourSchema = new Schema<ITour>(
     excluded: { type: [String], default: [] },
     tourPlan: { type: [String], default: [] },
     aminities: { type: [String], default: [] },
-    division: { type: Schema.Types.ObjectId, ref: "Division", required: true },
-    tourType: { type: Schema.Types.ObjectId, ref: "TourType", required: true },
+    divisionId: {
+      type: Schema.Types.ObjectId,
+      ref: "Division",
+      required: true,
+    },
+    tourTypeId: {
+      type: Schema.Types.ObjectId,
+      ref: "TourType",
+      required: true,
+    },
   },
   {
     timestamps: true,
