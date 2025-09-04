@@ -26,7 +26,6 @@ export const createDivisionZodSchema = z.object({
 // Zod scheme for updating division data
 export const updateDivisionZodSchema = z.object({
   // Name
-  // Name
   name: z
     .string({ error: "Name must be string" })
     .min(2, { error: "Name must be at least 2 characters long." })
