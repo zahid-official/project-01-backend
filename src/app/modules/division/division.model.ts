@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IDivision } from "./division.interface";
 
-// Mongoose schema definition for Division
+// Mongoose schema definition for division
 const divisionSchema = new Schema<IDivision>(
   {
     name: { type: String, required: true, unique: true },
