@@ -1,16 +1,5 @@
 import { model, Schema } from "mongoose";
-import { ITour, ITourType } from "./tour.interface";
-
-// Mongoose schema definition for tour type
-const tourTypeSchema = new Schema<ITourType>(
-  {
-    name: { type: String, unique: true, required: true },
-  },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
-);
+import { ITour } from "./tour.interface";
 
 // Mongoose schema definition for tour
 const tourSchema = new Schema<ITour>(
@@ -36,13 +25,6 @@ const tourSchema = new Schema<ITour>(
     timestamps: true,
     versionKey: false,
   }
-);
-
-// Create mongoose model from tour type schema
-export const TourType = model<ITourType>(
-  "TourType",
-  tourTypeSchema,
-  "tourTypeCollection"
 );
 
 // Create mongoose model from tour schema.

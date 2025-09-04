@@ -1,10 +1,5 @@
 import { Types } from "mongoose";
 
-// Tour type interface defination
-export interface ITourType {
-  name: string;
-}
-
 // Tour interface defination
 export interface ITour {
   title: string;
