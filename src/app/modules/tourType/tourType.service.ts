@@ -20,7 +20,7 @@ const createTourType = async (payload: ITourType) => {
   if (isTourTypeExists) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `Tour type '${payload.name}' already exists`
+      `TourType '${payload.name}' already exists. Please provide a different tourType name to create`
     );
   }
 
@@ -28,10 +28,42 @@ const createTourType = async (payload: ITourType) => {
   return tourType;
 };
 
+// Update tourType details
+const updateTourType = async (
+  tourTypeId: string,
+  payload: Partial<ITourType>
+) => {
+  // Check if tourType exists
+  const isTourTypeExists = await TourType.findById(tourTypeId);
+  if (!isTourTypeExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "TourType not found");
+  }
+
+  // Check if the updated name conflicts with another existing tourType
+  if (isTourTypeExists.name === payload.name) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `TourType '${payload.name}' already exists. Please provide a different tourType name to update`
+    );
+  }
+
+  const modifiedDetails = await TourType.findByIdAndUpdate(
+    tourTypeId,
+    payload,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  return modifiedDetails;
+};
+
 // TourType service object
 const tourTypeService = {
   createTourType,
   getAllTourTypes,
+  updateTourType,
 };
 
 export default tourTypeService;
