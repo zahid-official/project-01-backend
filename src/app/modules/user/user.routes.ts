@@ -8,18 +8,18 @@ import { Role } from "./user.interface";
 // Initialize router
 const router = Router();
 
-// Create new user
-router.post(
-  "/register",
-  validateUserData(createUserZodSchema),
-  userController.createUser
-);
-
 // Get all users
 router.get(
   "/",
   validateToken(Role.ADMIN, Role.SUPER_ADMIN),
   userController.getAllUsers
+);
+
+// Create new user
+router.post(
+  "/register",
+  validateUserData(createUserZodSchema),
+  userController.createUser
 );
 
 // Update user

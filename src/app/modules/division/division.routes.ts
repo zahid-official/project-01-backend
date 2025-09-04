@@ -3,7 +3,11 @@ import divisionController from "./division.controller";
 import { createDivisionZodSchema } from "./division.validation";
 import validateUserData from "../../middlewares/validateUserData";
 
+// Initialize router
 const router = Router();
+
+// Get all divisions
+router.post("/", divisionController.getAllDivisions);
 
 // Create new division
 router.post(
