@@ -5,7 +5,11 @@ import validateToken from "../../middlewares/validateToken";
 import validateSchema from "../../middlewares/validateSchema";
 import { createTourTypeZodSchema } from "./tourType.validation";
 
+// Initialize router
 const router = Router();
+
+// Get all tourTypes
+router.get("/", tourTypeController.getAllTourTypes);
 
 // Create new tourType
 router.post(
