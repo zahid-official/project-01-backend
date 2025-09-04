@@ -59,11 +59,24 @@ const updateTourType = async (
   return modifiedDetails;
 };
 
+// Delete tourType
+const deleteTourType = async (tourTypeId: string) => {
+  // Check if tourType exists
+  const isTourTypeExists = await TourType.findById(tourTypeId);
+  if (!isTourTypeExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "TourType not found");
+  }
+
+  const deletedTourType = await TourType.findByIdAndDelete(tourTypeId);
+  return deletedTourType;
+};
+
 // TourType service object
 const tourTypeService = {
   createTourType,
   getAllTourTypes,
   updateTourType,
+  deleteTourType,
 };
 
 export default tourTypeService;

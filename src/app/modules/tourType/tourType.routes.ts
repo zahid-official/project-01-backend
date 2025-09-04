@@ -30,6 +30,13 @@ router.patch(
   tourTypeController.updateTourType
 );
 
+// Delete tourType
+router.delete(
+  "/:id",
+  validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+  tourTypeController.deleteTourType
+);
+
 // Export tourType routes
 const tourTypeRoutes = router;
 export default tourTypeRoutes;
