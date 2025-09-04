@@ -18,7 +18,10 @@ const createDivision = async (payload: IDivision) => {
   // Check if division already exists
   const isDivisionExists = await Division.findOne({ name: payload.name });
   if (isDivisionExists) {
-    throw new AppError(httpStatus.CONFLICT, "Division already exists");
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `Division ${payload.name} already exists`
+    );
   }
 
   const division = await Division.create(payload);

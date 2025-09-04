@@ -7,7 +7,7 @@ import validateUserData from "../../middlewares/validateUserData";
 const router = Router();
 
 // Get all divisions
-router.post("/", divisionController.getAllDivisions);
+router.get("/", divisionController.getAllDivisions);
 
 // Create new division
 router.post(

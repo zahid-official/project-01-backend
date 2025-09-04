@@ -33,7 +33,7 @@ const globalErrorHandler = (
     statusCode = httpStatus.BAD_REQUEST;
     message = `${Object.values(
       error.keyValue
-    )} is already associated with an existing user`;
+    )} is already associated with an existing one. Please use another value.`;
   }
 
   // Mongoose cast error handling
