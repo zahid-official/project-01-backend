@@ -4,7 +4,7 @@ import { Role } from "../user/user.interface";
 import authController from "./auth.controller";
 import { resetPasswordZodSchema } from "./auth.validation";
 import validateToken from "../../middlewares/validateToken";
-import validateUserData from "../../middlewares/validateUserData";
+import validateSchema from "../../middlewares/validateSchema";
 
 // Initialize router
 const router = Router();
@@ -16,7 +16,7 @@ router.post("/logout", authController.logout);
 router.post(
   "/reset-password",
   validateToken(...Object.values(Role)),
-  validateUserData(resetPasswordZodSchema),
+  validateSchema(resetPasswordZodSchema),
   authController.resetPassword
 );
 

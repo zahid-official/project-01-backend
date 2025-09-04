@@ -1,7 +1,7 @@
 import { Router } from "express";
 import userController from "./user.controller";
 import { createUserZodSchema, updateUserZodSchema } from "./user.validation";
-import validateUserData from "../../middlewares/validateUserData";
+import validateSchema from "../../middlewares/validateSchema";
 import validateToken from "../../middlewares/validateToken";
 import { Role } from "./user.interface";
 
@@ -18,7 +18,7 @@ router.get(
 // Create new user
 router.post(
   "/register",
-  validateUserData(createUserZodSchema),
+  validateSchema(createUserZodSchema),
   userController.createUser
 );
 
@@ -26,7 +26,7 @@ router.post(
 router.patch(
   "/:id",
   validateToken(...Object.values(Role)),
-  validateUserData(updateUserZodSchema),
+  validateSchema(updateUserZodSchema),
   userController.updateUser
 );
 

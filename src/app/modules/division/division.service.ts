@@ -28,10 +28,42 @@ const createDivision = async (payload: IDivision) => {
   return division;
 };
 
+// Update division details
+const updateDivision = async (
+  divisionId: string,
+  payload: Partial<IDivision>
+) => {
+  // Check if division exists
+  const isDivisionExists = await Division.findById(divisionId);
+  if (!isDivisionExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "Division not found");
+  }
+
+  // Check if the updated name conflicts with another existing division
+  if (isDivisionExists.name === payload.name) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `Division ${payload.name} already exists. Please provide a different division name to update`
+    );
+  }
+
+  const modifiedDetails = await Division.findByIdAndUpdate(
+    divisionId,
+    payload,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  return modifiedDetails;
+};
+
 // Division service object
 const divisionService = {
   getAllDivisions,
   createDivision,
+  updateDivision,
 };
 
 export default divisionService;

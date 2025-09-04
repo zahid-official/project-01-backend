@@ -37,10 +37,29 @@ const createDivision = catchAsync(
   }
 );
 
+// Update division
+const updateDivision = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const divisionId = req?.params?.id;
+    const body = req?.body;
+
+    const result = await divisionService.updateDivision(divisionId, body);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Division details updated successfully",
+      data: result,
+    });
+  }
+);
+
 // Division controller object
 const divisionController = {
   getAllDivisions,
   createDivision,
+  updateDivision,
 };
 
 export default divisionController;
