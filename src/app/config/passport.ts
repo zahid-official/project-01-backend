@@ -9,8 +9,10 @@ import {
 import envVars from "./env";
 import User from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
+import { Strategy as LocalStrategy } from "passport-local";
+import bcrypt from "bcryptjs";
 
-// Configure Google OAuth strategy
+// Configure google oauth strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -18,6 +20,8 @@ passport.use(
       clientSecret: envVars.GOOGLE_CLIENT_SECRET,
       callbackURL: envVars.GOOGLE_CALLBACK_URL,
     },
+
+    // Verify callback
     async (
       accessToken: string,
       refreshToken: string,
@@ -59,10 +63,57 @@ passport.use(
   )
 );
 
+// Configure local strategy for email and password authentication
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+
+    // Verify callback
+    async (email: string, password: string, done: any) => {
+      try {
+        // Check if user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+          return done(null, false, { message: "User does not exist" });
+        }
+
+        // Check user authentication method
+        const googleAuthenticated = user.auths?.some(
+          (auth) => auth.provider === "google"
+        );
+        if (googleAuthenticated && !user.password) {
+          return done(null, false, {
+            message:
+              "Please log in with Google first and set a password to enable email login.",
+          });
+        }
+
+        // Compare password with database stored password
+        const isPasswordMatched = await bcrypt.compare(
+          password,
+          user.password as string
+        );
+        if (!isPasswordMatched) {
+          return done(null, false, { message: "Invalid email or password" });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        done(error);
+      }
+    }
+  )
+);
+
 // Serialize user
-passport.serializeUser((user: any, done: (error: any, id?: unknown) => void) => {
-  done(null, user._id);
-});
+passport.serializeUser(
+  (user: any, done: (error: any, id?: unknown) => void) => {
+    done(null, user._id);
+  }
+);
 
 // Deserialize user
 passport.deserializeUser(async (id: string, done: any) => {

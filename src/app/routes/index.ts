@@ -1,6 +1,9 @@
 import { Router } from "express";
 import userRoutes from "../modules/user/user.routes";
 import authRoutes from "../modules/auth/auth.routes";
+import tourRoutes from "../modules/tour/tour.routes";
+import tourTypeRoutes from "../modules/tourType/tourType.routes";
+import divisionRoutes from "../modules/division/division.routes";
 
 // Initialize main router
 const router = Router();
@@ -14,6 +17,18 @@ const moduleRoutes = [
   {
     path: "/auth",
     route: authRoutes,
+  },
+  {
+    path: "/tour",
+    route: tourRoutes,
+  },
+  {
+    path: "/tour-type",
+    route: tourTypeRoutes,
+  },
+  {
+    path: "/division",
+    route: divisionRoutes,
   },
 ];
 

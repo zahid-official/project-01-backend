@@ -28,6 +28,20 @@ const globalErrorHandler = (
     errorDetails = error.issues;
   }
 
+  // Mongoose duplicate key error handling
+  else if (error.code && error.code === 11000) {
+    statusCode = httpStatus.BAD_REQUEST;
+    message = `${Object.values(
+      error.keyValue
+    )} is already associated with an existing one. Please use another value.`;
+  }
+
+  // Mongoose cast error handling
+  else if (error.name === "CastError") {
+    statusCode = httpStatus.BAD_REQUEST;
+    message = "Invalid ObjectID. Please provide a valid MongoDB ObjectID";
+  }
+
   // JWT error handling
   else if (
     error.name === "JsonWebTokenError" ||
@@ -44,7 +58,10 @@ const globalErrorHandler = (
     error: errorDetails,
     stack:
       envVars.NODE_ENV === "development"
-        ? error.stack?.split("\n").map((line: any) => line.trim())
+        ? error.stack
+            ?.split("\n")
+            .map((line: any) => line.trim())
+            .filter((line: any) => line.startsWith("at"))
         : null,
   });
 };
