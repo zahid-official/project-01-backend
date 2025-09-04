@@ -1,11 +1,12 @@
-import { Router } from "express";
-import authController from "./auth.controller";
-import validateToken from "../../middlewares/validateToken";
-import { Role } from "../user/user.interface";
-import { resetPasswordZodSchema } from "../user/user.validation";
-import validateUserData from "../../middlewares/validateUserData";
 import passport from "passport";
+import { Router } from "express";
+import { Role } from "../user/user.interface";
+import authController from "./auth.controller";
+import { resetPasswordZodSchema } from "./auth.validation";
+import validateToken from "../../middlewares/validateToken";
+import validateUserData from "../../middlewares/validateUserData";
 
+// Initialize router
 const router = Router();
 
 // Post routes
