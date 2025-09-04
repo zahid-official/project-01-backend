@@ -37,10 +37,29 @@ const createTour = catchAsync(
   }
 );
 
+// Update tour
+const updateTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const tourId = req?.params?.id;
+    const body = req?.body;
+
+    const result = await tourService.updateTour(tourId, body);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Tour details updated successfully",
+      data: result,
+    });
+  }
+);
+
 // Tour controller object
 const tourController = {
   getAllTours,
   createTour,
+  updateTour,
 };
 
 export default tourController;

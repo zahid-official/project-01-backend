@@ -22,7 +22,7 @@ router.post(
   divisionController.createDivision
 );
 
-// Update user
+// Update division
 router.patch(
   "/:id",
   validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
@@ -30,7 +30,7 @@ router.patch(
   divisionController.updateDivision
 );
 
-// Delete user
+// Delete division
 router.delete(
   "/:id",
   validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
