@@ -59,11 +59,24 @@ const updateDivision = async (
   return modifiedDetails;
 };
 
+// Delete division
+const deleteDivision = async (divisionId: string) => {
+  // Check if division exists
+  const isDivisionExists = await Division.findById(divisionId);
+  if (!isDivisionExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "Division not found");
+  }
+
+  const deletedDivision = await Division.findByIdAndDelete(divisionId);
+  return deletedDivision;
+};
+
 // Division service object
 const divisionService = {
   getAllDivisions,
   createDivision,
   updateDivision,
+  deleteDivision,
 };
 
 export default divisionService;

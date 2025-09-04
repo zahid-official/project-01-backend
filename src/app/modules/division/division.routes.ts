@@ -30,6 +30,13 @@ router.patch(
   divisionController.updateDivision
 );
 
+// Delete user
+router.delete(
+  "/:id",
+  validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+  divisionController.deleteDivision
+);
+
 // Export division routes
 const divisionRoutes = router;
 export default divisionRoutes;
