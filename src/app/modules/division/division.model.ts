@@ -15,6 +15,21 @@ const divisionSchema = new Schema<IDivision>(
   }
 );
 
+// Pre-save middleware to generate slug from name
+divisionSchema.pre("save", function (next) {
+  if (this.isModified("name")) {
+    const baseSlug = this.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/ /g, "-");
+
+    this.slug = `${baseSlug}-division`;
+  }
+
+  next();
+});
+
 // Create mongoose model from division schema
 const Division = model<IDivision>(
   "Division",
