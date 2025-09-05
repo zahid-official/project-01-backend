@@ -13,7 +13,7 @@ const registerUser = async (payload: Partial<IUser>) => {
   // Check if user already exists
   const isUserExists = await User.findOne({ email });
   if (isUserExists) {
-    throw new AppError(httpStatus.CONFLICT, `User ${email} already exists`);
+    throw new AppError(httpStatus.CONFLICT, `User '${email}' already exists`);
   }
 
   // Hash the password
