@@ -20,7 +20,7 @@ const createDivision = async (payload: IDivision) => {
   if (isDivisionExists) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `Division ${payload.name} already exists`
+      `Division '${payload.name}' already exists`
     );
   }
 
@@ -43,7 +43,7 @@ const updateDivision = async (
   if (isDivisionExists.name === payload.name) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `Division ${payload.name} already exists. Please provide a different division name to update`
+      `Division '${payload.name}' already exists. Please provide a different division name to update`
     );
   }
 

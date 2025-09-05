@@ -4,7 +4,7 @@ import { ITour } from "./tour.interface";
 // Mongoose schema definition for tour
 const tourSchema = new Schema<ITour>(
   {
-    title: { type: String, required: true },
+    title: { type: String, required: true, unique: true },
     slug: { type: String, unique: true },
     cost: { type: Number },
     minAge: { type: Number },
@@ -34,6 +34,22 @@ const tourSchema = new Schema<ITour>(
     versionKey: false,
   }
 );
+
+// Pre-save middleware to generate slug from name
+tourSchema.pre("save", function (next) {
+  // Generate slug only if the name is modified or new
+  if (this.isModified("title")) {
+    const slug = this.title
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/ /g, "-");
+
+    // Append the slug field
+    this.slug = `${slug}`;
+  }
+  next();
+});
 
 // Create mongoose model from tour schema.
 const Tour = model<ITour>("Tour", tourSchema, "tourCollection");

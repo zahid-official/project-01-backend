@@ -20,7 +20,7 @@ const createTour = async (payload: ITour) => {
   if (isTourExists) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `The '${payload.title}' already exists`
+      `Title '${payload.title}' already exists`
     );
   }
 
@@ -40,7 +40,7 @@ const updateTour = async (tourId: string, payload: Partial<ITour>) => {
   if (isTourExists.title === payload.title) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `Tour title '${payload.title}' already exists. Please provide a different tour title to update`
+      `Title '${payload.title}' already exists. Please provide a different title to update`
     );
   }
 
