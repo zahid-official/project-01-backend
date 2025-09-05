@@ -35,9 +35,9 @@ const tourSchema = new Schema<ITour>(
   }
 );
 
-// Pre-save middleware to generate slug from name
+// Pre-save middleware to generate slug from title
 tourSchema.pre("save", function (next) {
-  // Generate slug only if the name is modified or new
+  // Generate slug only if the title is modified or new
   if (this.isModified("title")) {
     const slug = this.title
       .toLowerCase()
@@ -47,6 +47,24 @@ tourSchema.pre("save", function (next) {
 
     // Append the slug field
     this.slug = `${slug}`;
+  }
+  next();
+});
+
+// Pre-update middleware to update slug if title is modified
+tourSchema.pre("findOneAndUpdate", function (next) {
+  const tourDocs = this.getUpdate() as Partial<ITour>;
+  // Regenerate slug only if the title is being updated
+  if (tourDocs.title) {
+    const slug = tourDocs.title
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/ /g, "-");
+    tourDocs.slug = `${slug}`;
+
+    // Append the slug field
+    this.setUpdate(tourDocs);
   }
   next();
 });
