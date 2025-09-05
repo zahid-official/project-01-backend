@@ -30,6 +30,22 @@ divisionSchema.pre("save", function (next) {
   next();
 });
 
+// Pre-update middleware to update slug if name is modified
+divisionSchema.pre("findOneAndUpdate", function (next) {
+  const divisionDocs = this.getUpdate() as Partial<IDivision>;
+  if (divisionDocs.name) {
+    const baseSlug = divisionDocs.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/ /g, "-");
+    divisionDocs.slug = `${baseSlug}-division`;
+    this.setUpdate(divisionDocs);
+  }
+
+  next();
+});
+
 // Create mongoose model from division schema
 const Division = model<IDivision>(
   "Division",
