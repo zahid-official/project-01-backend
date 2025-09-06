@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
+
 import Tour from "./tour.model";
 import { ITour } from "./tour.interface";
 import httpStatus from "http-status-codes";
 import AppError from "../../errors/AppError";
+import { excludeFields } from "../../utils/contants";
 
 // Get all tours
 const getAllTours = async (query: Record<string, string>) => {
@@ -14,12 +17,15 @@ const getAllTours = async (query: Record<string, string>) => {
     })),
   };
 
+  // Sort functionality
+  const sort = query.sort || "-createdAt";
+
   // Filter functionality
   const filter = query;
-  delete filter.searchTerm;
+  excludeFields.forEach((field) => delete filter[field]);
 
   // Retrieve tours data from database
-  const tours = await Tour.find(searchQuery).find(filter);
+  const tours = await Tour.find(searchQuery).find(filter).sort(sort);
   const totalTours = await Tour.countDocuments();
 
   return {
