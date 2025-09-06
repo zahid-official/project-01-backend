@@ -8,6 +8,16 @@ import { excludeFields } from "../../utils/contants";
 
 // Get all tours
 const getAllTours = async (query: Record<string, string>) => {
+  // Filter functionality
+  const filter = { ...query };
+  excludeFields?.forEach((field) => delete filter[field]);
+
+  // Field filtering functionality
+  const fields = query?.fields?.split(",").join(" ") || "";
+
+  // Sort functionality
+  const sort = query?.sort || "-createdAt";
+
   // Search functionality
   const searchTerm = query?.searchTerm || "";
   const searchFields = ["title", "location", "description"];
@@ -17,21 +27,20 @@ const getAllTours = async (query: Record<string, string>) => {
     })),
   };
 
-  // Sort functionality
-  const sort = query?.sort || "-createdAt";
-
-  // Field filtering functionality
-  const fields = query?.fields?.split(",").join(" ") || "";
-
-  // Filter functionality
-  const filter = query;
-  excludeFields.forEach((field) => delete filter[field]);
+  // Pagination functionality
+  const page = Number(query?.page) || 1;
+  const limit = Number(query?.limit) || 10;
+  const skip = (page - 1) * limit;
 
   // Retrieve tours data from database
   const tours = await Tour.find(searchQuery)
     .find(filter)
+    .select(fields)
     .sort(sort)
-    .select(fields);
+    .skip(skip)
+    .limit(limit);
+
+  // Get total count of tours
   const totalTours = await Tour.countDocuments();
 
   return {
