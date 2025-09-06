@@ -4,12 +4,27 @@ import httpStatus from "http-status-codes";
 import AppError from "../../errors/AppError";
 
 // Get all tours
-const getAllTours = async () => {
-  const tours = await Tour.find();
-  const totaltours = await Tour.countDocuments();
+const getAllTours = async (query: Record<string, string>) => {
+  // Search functionality
+  const searchTerm = query.searchTerm || "";
+  const searchFields = ["title", "location", "description"];
+  const searchQuery = {
+    $or: searchFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: "i" },
+    })),
+  };
+
+  // Filter functionality
+  const filter = query;
+  delete filter.searchTerm;
+
+  // Retrieve tours data from database
+  const tours = await Tour.find(searchQuery).find(filter);
+  const totalTours = await Tour.countDocuments();
+
   return {
     data: tours,
-    meta: { total: totaltours },
+    meta: { total: totalTours, matched: tours.length },
   };
 };
 
