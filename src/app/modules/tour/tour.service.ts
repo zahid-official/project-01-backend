@@ -9,23 +9,29 @@ import { excludeFields } from "../../utils/contants";
 // Get all tours
 const getAllTours = async (query: Record<string, string>) => {
   // Search functionality
-  const searchTerm = query.searchTerm || "";
+  const searchTerm = query?.searchTerm || "";
   const searchFields = ["title", "location", "description"];
   const searchQuery = {
-    $or: searchFields.map((field) => ({
+    $or: searchFields?.map((field) => ({
       [field]: { $regex: searchTerm, $options: "i" },
     })),
   };
 
   // Sort functionality
-  const sort = query.sort || "-createdAt";
+  const sort = query?.sort || "-createdAt";
+
+  // Field filtering functionality
+  const fields = query?.fields?.split(",").join(" ") || "";
 
   // Filter functionality
   const filter = query;
   excludeFields.forEach((field) => delete filter[field]);
 
   // Retrieve tours data from database
-  const tours = await Tour.find(searchQuery).find(filter).sort(sort);
+  const tours = await Tour.find(searchQuery)
+    .find(filter)
+    .sort(sort)
+    .select(fields);
   const totalTours = await Tour.countDocuments();
 
   return {
