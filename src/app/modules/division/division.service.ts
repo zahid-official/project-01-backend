@@ -13,6 +13,14 @@ const getAllDivisions = async () => {
   };
 };
 
+// Get single division
+const getSingleDivision = async (slug: string) => {
+  const division = await Division.findOne({ slug });
+  return {
+    data: division,
+  };
+};
+
 // Create new division
 const createDivision = async (payload: IDivision) => {
   // Check if division already exists
@@ -74,6 +82,7 @@ const deleteDivision = async (divisionId: string) => {
 // Division service object
 const divisionService = {
   getAllDivisions,
+  getSingleDivision,
   createDivision,
   updateDivision,
   deleteDivision,

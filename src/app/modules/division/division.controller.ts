@@ -22,6 +22,22 @@ const getAllDivisions = catchAsync(
   }
 );
 
+// Get single division
+const getSingleDivision = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req?.params?.slug;
+    const result = await divisionService.getSingleDivision(slug);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "All divisions retrieved successfully",
+      data: result.data,
+    });
+  }
+);
+
 // Create new division
 const createDivision = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -75,6 +91,7 @@ const deleteDivision = catchAsync(
 // Division controller object
 const divisionController = {
   getAllDivisions,
+  getSingleDivision,
   createDivision,
   updateDivision,
   deleteDivision,

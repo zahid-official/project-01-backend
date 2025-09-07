@@ -14,6 +14,9 @@ const router = Router();
 // Get all divisions
 router.get("/", divisionController.getAllDivisions);
 
+// Get single division
+router.get("/:slug", divisionController.getSingleDivision);
+
 // Create new division
 router.post(
   "/create",

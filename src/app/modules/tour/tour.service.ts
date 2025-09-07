@@ -16,21 +16,11 @@ const getAllTours = async (query: Record<string, string>) => {
     .fieldSelect()
     .sort()
     .search(searchFields)
-    .paginate().modelQuery;
+    .paginate()
+    .build();
 
-  // Get total count of tours & total pages
-  const totalTours = await Tour.countDocuments();
-  // const totalPages = Math.ceil(totalTours / limit);
-
-  // Prepare meta data
-  const meta = {
-    // page,
-    // limit,
-    // totalPages,
-    totalTours,
-    matchedTours: tours.length,
-  };
-
+  // Get meta data for pagination
+  const meta = await queryBuilder.meta();
   return {
     data: tours,
     meta,
