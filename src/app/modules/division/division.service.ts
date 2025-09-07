@@ -13,6 +13,14 @@ const getAllDivisions = async () => {
   };
 };
 
+// Get single division
+const getSingleDivision = async (slug: string) => {
+  const division = await Division.findOne({ slug });
+  return {
+    data: division,
+  };
+};
+
 // Create new division
 const createDivision = async (payload: IDivision) => {
   // Check if division already exists
@@ -20,7 +28,7 @@ const createDivision = async (payload: IDivision) => {
   if (isDivisionExists) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `Division ${payload.name} already exists`
+      `Division '${payload.name}' already exists`
     );
   }
 
@@ -43,7 +51,7 @@ const updateDivision = async (
   if (isDivisionExists.name === payload.name) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `Division ${payload.name} already exists. Please provide a different division name to update`
+      `Division '${payload.name}' already exists. Please provide a different division name to update`
     );
   }
 
@@ -74,6 +82,7 @@ const deleteDivision = async (divisionId: string) => {
 // Division service object
 const divisionService = {
   getAllDivisions,
+  getSingleDivision,
   createDivision,
   updateDivision,
   deleteDivision,

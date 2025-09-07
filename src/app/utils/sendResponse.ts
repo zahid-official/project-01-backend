@@ -1,9 +1,9 @@
 import { Response } from "express";
 
-interface TMeta {
-  total: number;
-}
+// Meta information interface
+type TMeta = Record<string, number>;
 
+// Response payload interface
 interface IResponse<T> {
   statusCode: number;
   success: boolean;
@@ -12,7 +12,8 @@ interface IResponse<T> {
   meta?: TMeta;
 }
 
-const sendResponse = <T> (res: Response, payload: IResponse<T>) => {
+// Send response function
+const sendResponse = <T>(res: Response, payload: IResponse<T>) => {
   res.status(payload.statusCode).json({
     success: payload.success,
     message: payload.message,

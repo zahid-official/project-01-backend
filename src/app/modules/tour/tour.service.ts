@@ -2,14 +2,28 @@ import Tour from "./tour.model";
 import { ITour } from "./tour.interface";
 import httpStatus from "http-status-codes";
 import AppError from "../../errors/AppError";
+import QueryBuilder from "../../utils/queryBuilder";
 
 // Get all tours
-const getAllTours = async () => {
-  const tours = await Tour.find();
-  const totaltours = await Tour.countDocuments();
+const getAllTours = async (query: Record<string, string>) => {
+  // Define searchable fields
+  const searchFields = ["title", "location", "description"];
+
+  // Build the query using QueryBuilder class and fetch tours
+  const queryBuilder = new QueryBuilder<ITour>(Tour.find(), query);
+  const tours = await queryBuilder
+    .filter()
+    .fieldSelect()
+    .sort()
+    .search(searchFields)
+    .paginate()
+    .build();
+
+  // Get meta data for pagination
+  const meta = await queryBuilder.meta();
   return {
     data: tours,
-    meta: { total: totaltours },
+    meta,
   };
 };
 
@@ -20,7 +34,7 @@ const createTour = async (payload: ITour) => {
   if (isTourExists) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `The '${payload.title}' already exists`
+      `Title '${payload.title}' already exists`
     );
   }
 
@@ -40,7 +54,7 @@ const updateTour = async (tourId: string, payload: Partial<ITour>) => {
   if (isTourExists.title === payload.title) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `Tour title '${payload.title}' already exists. Please provide a different tour title to update`
+      `Title '${payload.title}' already exists. Please provide a different title to update`
     );
   }
 

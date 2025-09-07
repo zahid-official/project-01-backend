@@ -11,7 +11,8 @@ export const createTourZodSchema = z.object({
           : "Title must be a string",
     })
     .min(2, { error: "Title must be at least 2 characters long." })
-    .max(50, { error: "Title cannot exceed 50 characters." }),
+    .max(50, { error: "Title cannot exceed 50 characters." })
+    .trim(),
 
   // Cost
   cost: z
@@ -26,7 +27,7 @@ export const createTourZodSchema = z.object({
     .optional(),
 
   // Location
-  location: z.string({ error: "Location must be a string" }).optional(),
+  location: z.string({ error: "Location must be a string" }).trim().optional(),
 
   // Max Guests
   maxGuests: z
@@ -38,6 +39,19 @@ export const createTourZodSchema = z.object({
   description: z
     .string({ error: "Description must be string" })
     .max(500, { error: "Description cannot exceed 500 characters." })
+    .trim()
+    .optional(),
+
+  // Departure Location
+  departureLocation: z
+    .string({ error: "Departure location must be a string" })
+    .trim()
+    .optional(),
+
+  // Arrival Location
+  arrivalLocation: z
+    .string({ error: "Arrival location must be a string" })
+    .trim()
     .optional(),
 
   // Start Date
@@ -89,11 +103,11 @@ export const createTourZodSchema = z.object({
     .array(z.string({ error: "Each amenity must be a string" }))
     .optional(),
 
-  // Division
-  divisionId: z.string({ error: "Division ID must be a string" }),
+  // Division id
+  divisionId: z.string({ error: "Division ID must be a string" }).trim(),
 
-  // Tour Type
-  tourTypeId: z.string({ error: "Tour Type ID must be a string" }),
+  // TourType id
+  tourTypeId: z.string({ error: "Tour Type ID must be a string" }).trim(),
 });
 
 // Zod scheme for updating tour data
@@ -103,6 +117,7 @@ export const updateTourZodSchema = z.object({
     .string({ error: "Title must be a string" })
     .min(2, { error: "Title must be at least 2 characters long." })
     .max(50, { error: "Title cannot exceed 50 characters." })
+    .trim()
     .optional(),
 
   // Cost
@@ -118,7 +133,7 @@ export const updateTourZodSchema = z.object({
     .optional(),
 
   // Location
-  location: z.string({ error: "Location must be a string" }).optional(),
+  location: z.string({ error: "Location must be a string" }).trim().optional(),
 
   // Max Guests
   maxGuests: z
@@ -130,6 +145,19 @@ export const updateTourZodSchema = z.object({
   description: z
     .string({ error: "Description must be string" })
     .max(500, { error: "Description cannot exceed 500 characters." })
+    .trim()
+    .optional(),
+
+  // Departure Location
+  departureLocation: z
+    .string({ error: "Departure location must be a string" })
+    .trim()
+    .optional(),
+
+  // Arrival Location
+  arrivalLocation: z
+    .string({ error: "Arrival location must be a string" })
+    .trim()
     .optional(),
 
   // Start Date
@@ -182,8 +210,14 @@ export const updateTourZodSchema = z.object({
     .optional(),
 
   // Division
-  divisionId: z.string({ error: "Division ID must be a string" }).optional(),
+  divisionId: z
+    .string({ error: "Division ID must be a string" })
+    .trim()
+    .optional(),
 
   // Tour Type
-  tourTypeId: z.string({ error: "Tour Type ID must be a string" }).optional(),
+  tourTypeId: z
+    .string({ error: "Tour Type ID must be a string" })
+    .trim()
+    .optional(),
 });
