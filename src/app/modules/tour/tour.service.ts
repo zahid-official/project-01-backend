@@ -1,54 +1,32 @@
-/* eslint-disable @typescript-eslint/no-dynamic-delete */
-
 import Tour from "./tour.model";
 import { ITour } from "./tour.interface";
 import httpStatus from "http-status-codes";
 import AppError from "../../errors/AppError";
-import { excludeFields } from "../../utils/contants";
+import QueryBuilder from "../../utils/queryBuilder";
 
 // Get all tours
 const getAllTours = async (query: Record<string, string>) => {
-  // Filter functionality
-  const filter = { ...query };
-  excludeFields?.forEach((field) => delete filter[field]);
-
-  // Field filtering functionality
-  const fields = query?.fields?.split(",").join(" ") || "";
-
-  // Sort functionality
-  const sort = query?.sort || "-createdAt";
-
-  // Search functionality
-  const searchTerm = query?.searchTerm || "";
+  // Define searchable fields
   const searchFields = ["title", "location", "description"];
-  const searchQuery = {
-    $or: searchFields?.map((field) => ({
-      [field]: { $regex: searchTerm, $options: "i" },
-    })),
-  };
 
-  // Pagination functionality
-  const page = Number(query?.page) || 1;
-  const limit = Number(query?.limit) || 10;
-  const skip = (page - 1) * limit;
-
-  // Retrieve tours data from database
-  const tours = await Tour.find(searchQuery)
-    .find(filter)
-    .select(fields)
-    .sort(sort)
-    .skip(skip)
-    .limit(limit);
+  // Build the query using QueryBuilder class and fetch tours
+  const queryBuilder = new QueryBuilder<ITour>(Tour.find(), query);
+  const tours = await queryBuilder
+    .filter()
+    .fieldSelect()
+    .sort()
+    .search(searchFields)
+    .paginate().modelQuery;
 
   // Get total count of tours & total pages
   const totalTours = await Tour.countDocuments();
-  const totalPages = Math.ceil(totalTours / limit);
+  // const totalPages = Math.ceil(totalTours / limit);
 
   // Prepare meta data
   const meta = {
-    page,
-    limit,
-    totalPages,
+    // page,
+    // limit,
+    // totalPages,
     totalTours,
     matchedTours: tours.length,
   };
