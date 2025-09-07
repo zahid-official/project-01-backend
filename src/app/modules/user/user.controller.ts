@@ -9,7 +9,10 @@ import sendResponse from "../../utils/sendResponse";
 // Get all users
 const getAllUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await userService.retrieveAllUsers();
+    const query = req?.query;
+    const result = await userService.retrieveAllUsers(
+      query as Record<string, string>
+    );
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
