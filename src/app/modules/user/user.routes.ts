@@ -15,6 +15,9 @@ router.get(
   userController.getAllUsers
 );
 
+// Get single user
+router.get("/:id", userController.getSingleUser);
+
 // Create new user
 router.post(
   "/register",

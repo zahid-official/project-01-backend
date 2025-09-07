@@ -31,6 +31,14 @@ const retrieveAllUsers = async (query: Record<string, string>) => {
   };
 };
 
+// Retrieve single user
+const retrieveSingleUser = async (id: string) => {
+  const user = await User.findById(id);
+  return {
+    data: user,
+  };
+};
+
 // Register new user
 const registerUser = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload || {};
@@ -126,8 +134,9 @@ const modifyUserDetails = async (
 
 // User service object
 const userService = {
-  registerUser,
   retrieveAllUsers,
+  retrieveSingleUser,
+  registerUser,
   modifyUserDetails,
 };
 

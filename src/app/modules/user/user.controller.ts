@@ -23,6 +23,22 @@ const getAllUsers = catchAsync(
   }
 );
 
+// Get single user
+const getSingleUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req?.params?.id;
+    const result = await userService.retrieveSingleUser(id);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "All tourTypes retrieved successfully",
+      data: result.data,
+    });
+  }
+);
+
 // Create new user
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -61,6 +77,7 @@ const updateUser = catchAsync(
 // User controller object
 const userController = {
   getAllUsers,
+  getSingleUser,
   createUser,
   updateUser,
 };
