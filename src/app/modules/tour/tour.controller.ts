@@ -9,7 +9,10 @@ import sendResponse from "../../utils/sendResponse";
 // Get all Tours
 const getAllTours = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await tourService.getAllTours();
+    const query = req?.query;
+    const result = await tourService.getAllTours(
+      query as Record<string, string>
+    );
 
     // Send response
     sendResponse(res, {

@@ -3,12 +3,14 @@ import z from "zod";
 // Zod scheme for resetting password
 export const resetPasswordZodSchema = z.object({
   // Old password
-  oldPassword: z.string({
-    error: (issue) =>
-      issue.input === undefined
-        ? "Old password is required"
-        : "Old password must be string",
-  }),
+  oldPassword: z
+    .string({
+      error: (issue) =>
+        issue.input === undefined
+          ? "Old password is required"
+          : "Old password must be string",
+    })
+    .trim(),
 
   // New password
   newPassword: z
@@ -19,6 +21,7 @@ export const resetPasswordZodSchema = z.object({
           : "New password must be string",
     })
     .min(8, { error: "New password must be at least 8 characters long." })
+    .trim()
 
     // Password complexity requirements
     .regex(/^(?=.*[A-Z])/, {
@@ -29,5 +32,6 @@ export const resetPasswordZodSchema = z.object({
     })
     .regex(/^(?=.*\d)/, {
       error: "New password must contain at least 1 number.",
-    }),
+    })
+    .trim(),
 });

@@ -11,15 +11,17 @@ export const createDivisionZodSchema = z.object({
           : "Name must be a string",
     })
     .min(2, { error: "Name must be at least 2 characters long." })
-    .max(50, { error: "Name cannot exceed 50 characters." }),
+    .max(50, { error: "Name cannot exceed 50 characters." })
+    .trim(),
 
   // Thumbnail
-  thumbnail: z.string({ error: "Thumbnail must be string" }).optional(),
+  thumbnail: z.string({ error: "Thumbnail must be string" }).trim().optional(),
 
   // Description
   description: z
     .string({ error: "Description must be string" })
     .max(500, { error: "Description cannot exceed 500 characters." })
+    .trim()
     .optional(),
 });
 
@@ -30,14 +32,16 @@ export const updateDivisionZodSchema = z.object({
     .string({ error: "Name must be string" })
     .min(2, { error: "Name must be at least 2 characters long." })
     .max(50, { error: "Name cannot exceed 50 characters." })
+    .trim()
     .optional(),
 
   // Thumbnail
-  thumbnail: z.string({ error: "Thumbnail must be string" }).optional(),
+  thumbnail: z.string({ error: "Thumbnail must be string" }).trim().optional(),
 
   // Description
   description: z
     .string({ error: "Description must be string" })
     .max(500, { error: "Description cannot exceed 500 characters." })
+    .trim()
     .optional(),
 });

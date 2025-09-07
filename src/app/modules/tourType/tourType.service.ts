@@ -20,7 +20,7 @@ const createTourType = async (payload: ITourType) => {
   if (isTourTypeExists) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `TourType '${payload.name}' already exists. Please provide a different tourType name to create`
+      `TourType '${payload.name}' already exists`
     );
   }
 
