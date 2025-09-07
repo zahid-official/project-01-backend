@@ -11,6 +11,9 @@ const router = Router();
 // Get all tours
 router.get("/", tourController.getAllTours);
 
+// Get all tours
+router.get("/:slug", tourController.getSingleTour);
+
 // Create new tour
 router.post(
   "/create",
