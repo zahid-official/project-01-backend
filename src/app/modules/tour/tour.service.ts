@@ -19,7 +19,7 @@ const getAllTours = async (query: Record<string, string>) => {
     .paginate()
     .build();
 
-  // Get meta data
+  // Get meta data for pagination
   const meta = await queryBuilder.meta();
   return {
     data: tours,
