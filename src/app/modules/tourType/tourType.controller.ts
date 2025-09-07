@@ -25,6 +25,22 @@ const getAllTourTypes = catchAsync(
   }
 );
 
+// Get single tourType
+const getSingleTourType = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req?.params?.id;
+    const result = await tourTypeService.getSingleTourType(id);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "All tourTypes retrieved successfully",
+      data: result.data,
+    });
+  }
+);
+
 // Create new tourType
 const createTourType = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -78,6 +94,7 @@ const deleteTourType = catchAsync(
 // TourType controller object
 const tourTypeController = {
   getAllTourTypes,
+  getSingleTourType,
   createTourType,
   updateTourType,
   deleteTourType,

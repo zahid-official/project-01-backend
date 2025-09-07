@@ -28,6 +28,14 @@ const getAllTourTypes = async (query: Record<string, string>) => {
   };
 };
 
+// Get single tour
+const getSingleTourType = async (id: string) => {
+  const tour = await TourType.findById(id);
+  return {
+    data: tour,
+  };
+};
+
 // Create new tourType
 const createTourType = async (payload: ITourType) => {
   // Check if tourType already exists
@@ -88,8 +96,9 @@ const deleteTourType = async (tourTypeId: string) => {
 
 // TourType service object
 const tourTypeService = {
-  createTourType,
   getAllTourTypes,
+  getSingleTourType,
+  createTourType,
   updateTourType,
   deleteTourType,
 };
