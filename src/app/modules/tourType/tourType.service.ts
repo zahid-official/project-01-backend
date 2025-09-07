@@ -2,14 +2,29 @@ import TourType from "./tourType.model";
 import httpStatus from "http-status-codes";
 import AppError from "../../errors/AppError";
 import { ITourType } from "./tourType.interface";
+import QueryBuilder from "../../utils/queryBuilder";
 
 // Get all tourTypes
-const getAllTourTypes = async () => {
-  const tourTypes = await TourType.find();
-  const totalTourTypes = await TourType.countDocuments();
+const getAllTourTypes = async (query: Record<string, string>) => {
+  // Define searchable fields
+  const searchFields = ["name"];
+
+  // Build the query using QueryBuilder class and fetch tourTypes
+  const queryBuilder = new QueryBuilder<ITourType>(TourType.find(), query);
+  const tourTypes = await queryBuilder
+    .sort()
+    .filter()
+    .paginate()
+    .fieldSelect()
+    .search(searchFields)
+    .build();
+
+  // Get meta data for pagination
+  const meta = await queryBuilder.meta();
+
   return {
     data: tourTypes,
-    meta: { total: totalTourTypes },
+    meta,
   };
 };
 
