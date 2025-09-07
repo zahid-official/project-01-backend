@@ -57,6 +57,26 @@ class QueryBuilder<T> {
     this.modelQuery = this.modelQuery.skip(skip).limit(limit);
     return this;
   }
+
+  // Method to execute the built query
+  build(): Query<T[], T> {
+    return this.modelQuery;
+  }
+
+  // Method to get meta data
+  async meta(): Promise<{
+    page: number;
+    limit: number;
+    totalPage: number;
+    totalDocs: number;
+  }> {
+    const totalDocs = await this.modelQuery.model.countDocuments();
+    const page = Number(this.query?.page) || 1;
+    const limit = Number(this.query?.limit) || 10;
+    const totalPage = Math.ceil(totalDocs / limit);
+
+    return { page, limit, totalPage, totalDocs };
+  }
 }
 
 export default QueryBuilder;
