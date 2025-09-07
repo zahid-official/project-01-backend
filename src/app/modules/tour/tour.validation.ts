@@ -42,6 +42,18 @@ export const createTourZodSchema = z.object({
     .trim()
     .optional(),
 
+  // Departure Location
+  departureLocation: z
+    .string({ error: "Departure location must be a string" })
+    .trim()
+    .optional(),
+
+  // Arrival Location
+  arrivalLocation: z
+    .string({ error: "Arrival location must be a string" })
+    .trim()
+    .optional(),
+
   // Start Date
   startDate: z
     .string({ error: "Start date must be a valid string date format" })
@@ -133,6 +145,18 @@ export const updateTourZodSchema = z.object({
   description: z
     .string({ error: "Description must be string" })
     .max(500, { error: "Description cannot exceed 500 characters." })
+    .trim()
+    .optional(),
+
+  // Departure Location
+  departureLocation: z
+    .string({ error: "Departure location must be a string" })
+    .trim()
+    .optional(),
+
+  // Arrival Location
+  arrivalLocation: z
+    .string({ error: "Arrival location must be a string" })
     .trim()
     .optional(),
 
