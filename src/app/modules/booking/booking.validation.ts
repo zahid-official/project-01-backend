@@ -4,8 +4,8 @@ import { BookingStatus } from "./booking.interface";
 
 // Zod scheme for new booking creation
 export const createBookingZodSchema = z.object({
-  // Tour (ObjectId)
-  tour: z
+  // TourId
+  tourId: z
     .string({
       error: (issue) =>
         issue.input === undefined

@@ -10,9 +10,9 @@ export enum BookingStatus {
 
 // Booking interface definition
 export interface IBooking {
-  user: Types.ObjectId;
-  tour: Types.ObjectId;
-  payment?: Types.ObjectId;
+  userId: Types.ObjectId;
+  tourId: Types.ObjectId;
+  paymentId?: Types.ObjectId;
   guests: number;
   status: BookingStatus;
 }

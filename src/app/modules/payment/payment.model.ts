@@ -4,7 +4,7 @@ import { IPayment, PaymentStatus } from "./payment.interface";
 // Mongoose schema definition for payment
 const paymentSchema = new Schema<IPayment>(
   {
-    booking: {
+    bookingId: {
       type: Schema.Types.ObjectId,
       ref: "Booking",
       required: true,
