@@ -13,6 +13,6 @@ export interface IBooking {
   user: Types.ObjectId;
   tour: Types.ObjectId;
   payment?: Types.ObjectId;
+  guests: number;
   status: BookingStatus;
-  gusests: number;
 }
