@@ -11,7 +11,7 @@ const router = Router();
 // Get all tours
 router.get("/", tourController.getAllTours);
 
-// Get all tours
+// Get single tour
 router.get("/:slug", tourController.getSingleTour);
 
 // Create new tour

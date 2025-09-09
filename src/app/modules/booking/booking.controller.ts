@@ -56,7 +56,9 @@ const getSingleBooking = catchAsync(
 // Create new booking
 const createBooking = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await bookingService.createBooking();
+    const userId = req?.decodedToken?.userId;
+    const payload = req?.body;
+    const result = await bookingService.createBooking(userId, payload);
 
     // Send response
     sendResponse(res, {

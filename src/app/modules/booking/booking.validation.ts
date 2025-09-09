@@ -14,11 +14,17 @@ export const createBookingZodSchema = z.object({
     })
     .refine((value) => Types.ObjectId.isValid(value), {
       error: "Invalid ObjectId",
-    }),
+    })
+    .trim(),
 
   // Guests
   guests: z
-    .number({ error: "Guests must be a number" })
+    .number({
+      error: (issue) =>
+        issue.input === undefined
+          ? "Guests is required"
+          : "Guests must be a number",
+    })
     .min(1, { error: "Guests must be at least 1" }),
 });
 
