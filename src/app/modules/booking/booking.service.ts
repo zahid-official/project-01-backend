@@ -32,44 +32,58 @@ const getSingleBooking = async () => {
 
 // Create new booking
 const createBooking = async (userId: string, payload: Partial<IBooking>) => {
-  // Check if user has phone and address
-  const user = await User.findById(userId);
-  if (!user?.phone || !user?.address) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Please update your profile with phone number and address before booking a tour"
-    );
+  // Start a session for transaction
+  const session = await Booking.startSession();
+  session.startTransaction();
+
+  try {
+    // Check if user has phone and address
+    const user = await User.findById(userId);
+    if (!user?.phone || !user?.address) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Please update your profile with phone number and address before booking a tour"
+      );
+    }
+
+    // Create booking
+    payload.userId = userId as any;
+    const booking = await Booking.create([payload], { session });
+
+    // Check if tour cost exists
+    const tour = await Tour.findById(payload.tourId).select("cost");
+    if (!tour?.cost) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Tour cost not found");
+    }
+
+    // Create payment record
+    const paymentPayload = {
+      bookingId: booking[0]._id,
+      transactionId: getTransactionId(),
+      amount: Number(tour.cost) * Number(payload.guests),
+    };
+    const payment = await Payment.create([paymentPayload], { session });
+
+    // Update booking with payment ID
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      booking[0]._id,
+      { paymentId: payment[0]._id },
+      { new: true, runValidators: true, session }
+    )
+      .populate("userId", "name email phone address")
+      .populate("tourId", "title cost")
+      .populate("paymentId", "bookingId transactionId amount status");
+
+    // Commit transaction and end session
+    await session.commitTransaction();
+    session.endSession();
+    return updatedBooking;
+  } catch (error) {
+    // Abort transaction and rollback changes
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-
-  // Check if tour cost exists
-  const tour = await Tour.findById(payload.tourId).select("cost");
-  if (!tour?.cost) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Tour cost not found");
-  }
-
-  // Create booking
-  payload.userId = userId as any;
-  const booking = await Booking.create(payload);
-
-  // Create payment record
-  const paymentPayload = {
-    bookingId: booking._id,
-    transactionId: getTransactionId(),
-    amount: Number(tour.cost) * Number(payload.guests),
-  };
-  const payment = await Payment.create(paymentPayload);
-
-  // Update booking with payment ID
-  const updatedBooking = await Booking.findByIdAndUpdate(
-    booking._id,
-    { paymentId: payment._id },
-    { new: true, runValidators: true }
-  )
-    .populate("userId", "name email phone address")
-    .populate("tourId", "title cost")
-    .populate("paymentId", "bookingId transactionId amount status");
-
-  return updatedBooking;
 };
 
 // Update booking
