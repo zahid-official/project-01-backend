@@ -18,6 +18,21 @@ interface EnvConfig {
 
   EXPRESS_SESSION_SECRET: string;
   FRONTEND_URL: string;
+
+  SSL: {
+    STORE_ID: string;
+    STORE_PASSWORD: string;
+    PAYMENT_API: string;
+    VALIDATION_API: string;
+
+    SUCCESS_BACKEND_URL: string;
+    FAIL_BACKEND_URL: string;
+    CANCEL_BACKEND_URL: string;
+
+    SUCCESS_FRONTEND_URL: string;
+    FAIL_FRONTEND_URL: string;
+    CANCEL_FRONTEND_URL: string;
+  };
 }
 
 export default EnvConfig;

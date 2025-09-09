@@ -65,7 +65,7 @@ const createBooking = async (userId: string, payload: Partial<IBooking>) => {
     const payment = await Payment.create([paymentPayload], { session });
 
     // Update booking with payment ID
-    const updatedBooking = await Booking.findByIdAndUpdate(
+    const modifiedBooking = await Booking.findByIdAndUpdate(
       booking[0]._id,
       { paymentId: payment[0]._id },
       { new: true, runValidators: true, session }
@@ -77,7 +77,7 @@ const createBooking = async (userId: string, payload: Partial<IBooking>) => {
     // Commit transaction and end session
     await session.commitTransaction();
     session.endSession();
-    return updatedBooking;
+    return modifiedBooking;
   } catch (error) {
     // Abort transaction and rollback changes
     await session.abortTransaction();

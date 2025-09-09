@@ -23,6 +23,19 @@ const loadEnvs = (): EnvConfig => {
 
     "EXPRESS_SESSION_SECRET",
     "FRONTEND_URL",
+
+    "SSL_STORE_ID",
+    "SSL_STORE_PASSWORD",
+    "SSL_PAYMENT_API",
+    "SSL_VALIDATION_API",
+
+    "SSL_SUCCESS_BACKEND_URL",
+    "SSL_FAIL_BACKEND_URL",
+    "SSL_CANCEL_BACKEND_URL",
+
+    "SSL_SUCCESS_FRONTEND_URL",
+    "SSL_FAIL_FRONTEND_URL",
+    "SSL_CANCEL_FRONTEND_URL",
   ];
   requiredEnvs.forEach((key) => {
     if (!process.env[key]) {
@@ -51,6 +64,21 @@ const loadEnvs = (): EnvConfig => {
 
     EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET as string,
     FRONTEND_URL: process.env.FRONTEND_URL as string,
+
+    SSL: {
+      STORE_ID: process.env.SSL_STORE_ID as string,
+      STORE_PASSWORD: process.env.SSL_STORE_PASSWORD as string,
+      PAYMENT_API: process.env.SSL_PAYMENT_API as string,
+      VALIDATION_API: process.env.SSL_VALIDATION_API as string,
+
+      SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL as string,
+      FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL as string,
+      CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL as string,
+
+      SUCCESS_FRONTEND_URL: process.env.SSL_SUCCESS_FRONTEND_URL as string,
+      FAIL_FRONTEND_URL: process.env.SSL_FAIL_FRONTEND_URL as string,
+      CANCEL_FRONTEND_URL: process.env.SSL_CANCEL_FRONTEND_URL as string,
+    },
   };
 };
 
