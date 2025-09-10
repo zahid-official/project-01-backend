@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from "../../errors/AppError";
 import Booking from "../booking/booking.model";
 import { PaymentStatus } from "./payment.interface";
 import httpStatus from "http-status-codes";
 import Payment from "./payment.model";
 import { BookingStatus } from "../booking/booking.interface";
+import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
+import SSLService from "../sslCommerz/sslCommerz.service";
 
 // Successful payment handler
 const successPayment = async (transactionId: string) => {
@@ -67,7 +70,7 @@ const failedPayment = async (transactionId: string) => {
     const modifiedPayment = await Payment.findOneAndUpdate(
       { transactionId },
       { status: PaymentStatus.FAILED },
-      { new: true, runValidators: true, session }
+      { runValidators: true, session }
     );
 
     // Check if payment record exists
@@ -82,13 +85,13 @@ const failedPayment = async (transactionId: string) => {
     await Booking.findByIdAndUpdate(
       modifiedPayment?.bookingId,
       { status: BookingStatus.FAILED },
-      { new: true, runValidators: true, session }
+      { runValidators: true, session }
     );
 
     // Commit transaction and end session
     await session.commitTransaction();
     session.endSession();
-    return { failed: true, message: "Payment processing failed" };
+    return { success: false, message: "Payment processing failed" };
   } catch (error) {
     // Abort transaction and rollback changes
     await session.abortTransaction();
@@ -108,7 +111,7 @@ const canceledPayment = async (transactionId: string) => {
     const modifiedPayment = await Payment.findOneAndUpdate(
       { transactionId },
       { status: PaymentStatus.CANCELED },
-      { new: true, runValidators: true, session }
+      { runValidators: true, session }
     );
 
     // Check if payment record exists
@@ -123,13 +126,13 @@ const canceledPayment = async (transactionId: string) => {
     await Booking.findByIdAndUpdate(
       modifiedPayment?.bookingId,
       { status: BookingStatus.CANCELED },
-      { new: true, runValidators: true, session }
+      { runValidators: true, session }
     );
 
     // Commit transaction and end session
     await session.commitTransaction();
     session.endSession();
-    return { canceled: true, message: "Payment was canceled by the user" };
+    return { success: false, message: "Payment was canceled by the user" };
   } catch (error) {
     // Abort transaction and rollback changes
     await session.abortTransaction();
@@ -138,11 +141,39 @@ const canceledPayment = async (transactionId: string) => {
   }
 };
 
+// Complete payment of canceled booking
+const completePayment = async (bookingId: string) => {
+  // Check if booking exists
+  const booking = await Booking.findById(bookingId)
+    .populate("userId", "name email phone address")
+    .populate("paymentId", "transactionId amount status");
+  if (!booking) {
+    throw new AppError(httpStatus.NOT_FOUND, "Booking not found");
+  }
+
+  // Initiate SSLCommerz payment
+  const bookingDetails = booking as any;
+  const sslPayload: ISSLCommerz = {
+    name: bookingDetails?.userId?.name,
+    email: bookingDetails.userId?.email,
+    phone: bookingDetails?.userId?.phone,
+    address: bookingDetails?.userId?.address,
+    amount: bookingDetails?.paymentId?.amount,
+    transactionId: bookingDetails?.paymentId?.transactionId,
+  };
+
+  const sslCommerz = await SSLService.sslCommerz(sslPayload);
+  return {
+    paymentUrl: sslCommerz.GatewayPageURL,
+  };
+};
+
 // Payment service object
 const paymentService = {
   successPayment,
   failedPayment,
   canceledPayment,
+  completePayment,
 };
 
 export default paymentService;

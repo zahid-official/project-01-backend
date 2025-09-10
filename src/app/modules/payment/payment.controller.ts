@@ -32,7 +32,7 @@ const failedPayment = catchAsync(
     const result = await paymentService.failedPayment(transactionId);
 
     // Redirect to frontend with query params
-    if (result.failed) {
+    if (!result.success) {
       res.redirect(
         `${envVars.SSL.FAILED_FRONTEND_URL}/payment/success?transactionId=${transactionId}&amount=${amount}&status=${status}`
       );
@@ -49,11 +49,27 @@ const canceledPayment = catchAsync(
     const result = await paymentService.canceledPayment(transactionId);
 
     // Redirect to frontend with query params
-    if (result.canceled) {
+    if (!result.success) {
       res.redirect(
         `${envVars.SSL.FAILED_FRONTEND_URL}/payment/success?transactionId=${transactionId}&amount=${amount}&status=${status}`
       );
     }
+  }
+);
+
+// Complete payment of canceled booking
+const completePayment = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const bookingId = req?.params?.bookingId as string;
+    const result = await paymentService.completePayment(bookingId);
+
+    // Send response
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Payment process initiated successfully",
+      data: result,
+    });
   }
 );
 
@@ -62,6 +78,7 @@ const paymentController = {
   successPayment,
   failedPayment,
   canceledPayment,
+  completePayment,
 };
 
 export default paymentController;
