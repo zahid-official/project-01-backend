@@ -43,7 +43,7 @@ router.post(
 // Update booking
 router.patch(
   "/:id",
-  validateToken(...Object.values(Role)),
+  validateToken(Role.ADMIN, Role.SUPER_ADMIN),
   validateSchema(updateBookingZodSchema),
   bookingController.updateBooking
 );

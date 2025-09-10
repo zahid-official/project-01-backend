@@ -3,7 +3,7 @@
 import AppError from "../../errors/AppError";
 import Tour from "../tour/tour.model";
 import User from "../user/user.model";
-import { IBooking } from "./booking.interface";
+import { BookingStatus, IBooking } from "./booking.interface";
 import httpStatus from "http-status-codes";
 import Booking from "./booking.model";
 import Payment from "../payment/payment.model";
@@ -11,6 +11,7 @@ import getTransactionId from "../../utils/getTransactionId";
 import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
 import SSLService from "../sslCommerz/sslCommerz.service";
 import QueryBuilder from "../../utils/queryBuilder";
+import { PaymentStatus } from "../payment/payment.interface";
 
 // Get all bookings
 const getAllBookings = async (query: Record<string, string>) => {
@@ -138,8 +139,69 @@ const createBooking = async (userId: string, payload: Partial<IBooking>) => {
 };
 
 // Update booking
-const updateBooking = async () => {
-  return {};
+const updateBooking = async (bookingId: string, payload: Partial<IBooking>) => {
+  // Start a session for transaction
+  const session = await Booking.startSession();
+  session.startTransaction();
+
+  try {
+    // Check if booking exists
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      throw new AppError(httpStatus.NOT_FOUND, "Booking not found");
+    }
+
+    // Check if the updated status and existing status are the same
+    if (booking.status === payload.status) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Booking is already in ${booking.status} status. Please provide a different status to update`
+      );
+    }
+
+    // Update booking status
+    const modifiedBooking = await Booking.findByIdAndUpdate(
+      bookingId,
+      payload,
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    // Check if payment exists
+    const payment = await Payment.findById(booking.paymentId);
+    if (!payment) {
+      throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+    }
+
+    // Update payment status based on booking status
+    if (modifiedBooking?.status) {
+      if (modifiedBooking?.status === BookingStatus.PENDING) {
+        payment.status = PaymentStatus.UNPAID;
+      } else if (modifiedBooking?.status === BookingStatus.COMPLETED) {
+        payment.status = PaymentStatus.PAID;
+      } else if (modifiedBooking?.status === BookingStatus.FAILED) {
+        payment.status = PaymentStatus.FAILED;
+      } else if (modifiedBooking?.status === BookingStatus.CANCELED) {
+        payment.status = PaymentStatus.CANCELED;
+      }
+
+      // Save payment status to database
+      await payment.save({ session });
+    }
+
+    // Commit transaction and end session
+    await session.commitTransaction();
+    session.endSession();
+    return modifiedBooking;
+  } catch (error) {
+    // Abort transaction and rollback changes
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 // Delete booking

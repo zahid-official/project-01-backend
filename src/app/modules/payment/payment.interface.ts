@@ -6,7 +6,6 @@ export enum PaymentStatus {
   PAID = "PAID",
   UNPAID = "UNPAID",
   FAILED = "FAILED",
-  REFUNDED = "REFUNDED",
   CANCELED = "CANCELED",
 }
 
