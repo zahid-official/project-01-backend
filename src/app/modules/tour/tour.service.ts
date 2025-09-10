@@ -27,6 +27,14 @@ const getAllTours = async (query: Record<string, string>) => {
   };
 };
 
+// Get single tour
+const getSingleTour = async (slug: string) => {
+  const tour = await Tour.findOne({ slug });
+  return {
+    data: tour,
+  };
+};
+
 // Create new tour
 const createTour = async (payload: ITour) => {
   // Check if tour already exists
@@ -81,6 +89,7 @@ const deleteTour = async (tourId: string) => {
 // Tour service object
 const tourService = {
   getAllTours,
+  getSingleTour,
   createTour,
   updateTour,
   deleteTour,

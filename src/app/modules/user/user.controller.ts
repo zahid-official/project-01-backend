@@ -9,13 +9,32 @@ import sendResponse from "../../utils/sendResponse";
 // Get all users
 const getAllUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await userService.retrieveAllUsers();
+    const query = req?.query;
+    const result = await userService.retrieveAllUsers(
+      query as Record<string, string>
+    );
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "All users retrieved successfully",
       data: result.data,
       meta: result.meta,
+    });
+  }
+);
+
+// Get single user
+const getSingleUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req?.params?.id;
+    const result = await userService.retrieveSingleUser(id);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "All tourTypes retrieved successfully",
+      data: result.data,
     });
   }
 );
@@ -58,6 +77,7 @@ const updateUser = catchAsync(
 // User controller object
 const userController = {
   getAllUsers,
+  getSingleUser,
   createUser,
   updateUser,
 };

@@ -6,7 +6,7 @@ import httpStatus from "http-status-codes";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 
-// Get all Tours
+// Get all tours
 const getAllTours = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const query = req?.query;
@@ -21,6 +21,22 @@ const getAllTours = catchAsync(
       message: "All tours retrieved successfully",
       data: result.data,
       meta: result.meta,
+    });
+  }
+);
+
+// Get single tour
+const getSingleTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req?.params?.slug;
+    const result = await tourService.getSingleTour(slug);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "All tours retrieved successfully",
+      data: result.data,
     });
   }
 );
@@ -78,6 +94,7 @@ const deleteTour = catchAsync(
 // Tour controller object
 const tourController = {
   getAllTours,
+  getSingleTour,
   createTour,
   updateTour,
   deleteTour,
