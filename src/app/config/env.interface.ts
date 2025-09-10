@@ -33,6 +33,12 @@ interface EnvConfig {
     FAILED_FRONTEND_URL: string;
     CANCELED_FRONTEND_URL: string;
   };
+
+  CLOUDINARY: {
+    CLOUD_NAME: string;
+    API_KEY: string;
+    API_SECRET: string;
+  };
 }
 
 export default EnvConfig;
