@@ -35,11 +35,29 @@ const getAllBookings = async (query: Record<string, string>) => {
   };
 };
 
-// Get user bookings
-const getUserBookings = async () => {
+// Get my bookings
+const getMyBookings = async (userId: string, query: Record<string, string>) => {
+  // Define searchable fields
+  const searchFields = ["status"];
+
+  // Build the query using QueryBuilder class and fetch bookings
+  const queryBuilder = new QueryBuilder<IBooking>(
+    Booking.find({ userId }),
+    query
+  );
+  const bookings = await queryBuilder
+    .filter()
+    .fieldSelect()
+    .sort()
+    .search(searchFields)
+    .paginate()
+    .build();
+
+  // Get meta data for pagination
+  const meta = await queryBuilder.meta();
   return {
-    data: { data: 0 },
-    meta: { meta: 0 },
+    data: bookings,
+    meta,
   };
 };
 
@@ -129,7 +147,7 @@ const deleteBooking = async () => {
 // Booking service object
 const bookingService = {
   getAllBookings,
-  getUserBookings,
+  getMyBookings,
   getSingleBooking,
   createBooking,
   updateBooking,

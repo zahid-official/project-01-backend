@@ -25,10 +25,15 @@ const getAllBookings = catchAsync(
   }
 );
 
-// Get user bookings
-const getUserBookings = catchAsync(
+// Get my bookings
+const getMyBookings = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await bookingService.getUserBookings();
+    const query = req?.query;
+    const userId = req?.decodedToken?.userId;
+    const result = await bookingService.getMyBookings(
+      userId,
+      query as Record<string, string>
+    );
 
     // Send response
     sendResponse(res, {
@@ -44,14 +49,14 @@ const getUserBookings = catchAsync(
 // Get single bookings
 const getSingleBooking = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await bookingService.getUserBookings();
+    const result = await bookingService.getSingleBooking();
 
     // Send response
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "Booking retrieved successfully",
-      data: result.data,
+      data: result,
     });
   }
 );
@@ -106,7 +111,7 @@ const deleteBooking = catchAsync(
 // Booking controller object
 const bookingController = {
   getAllBookings,
-  getUserBookings,
+  getMyBookings,
   getSingleBooking,
   createBooking,
   updateBooking,

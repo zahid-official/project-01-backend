@@ -18,11 +18,11 @@ router.get(
   bookingController.getAllBookings
 );
 
-// Get user bookings
+// Get my bookings
 router.get(
   "/my-bookings",
   validateToken(...Object.values(Role)),
-  bookingController.getUserBookings
+  bookingController.getMyBookings
 );
 
 // Get single booking
