@@ -96,20 +96,6 @@ const updateBooking = catchAsync(
   }
 );
 
-// Delete tour
-const deleteBooking = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const result = await bookingService.deleteBooking();
-
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Booking deleted successfully",
-      data: result,
-    });
-  }
-);
 
 // Booking controller object
 const bookingController = {
@@ -118,7 +104,6 @@ const bookingController = {
   getSingleBooking,
   createBooking,
   updateBooking,
-  deleteBooking,
 };
 
 export default bookingController;

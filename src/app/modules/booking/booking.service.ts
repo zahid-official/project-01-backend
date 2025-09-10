@@ -204,11 +204,6 @@ const updateBooking = async (bookingId: string, payload: Partial<IBooking>) => {
   }
 };
 
-// Delete booking
-const deleteBooking = async () => {
-  return {};
-};
-
 // Booking service object
 const bookingService = {
   getAllBookings,
@@ -216,7 +211,6 @@ const bookingService = {
   getSingleBooking,
   createBooking,
   updateBooking,
-  deleteBooking,
 };
 
 export default bookingService;

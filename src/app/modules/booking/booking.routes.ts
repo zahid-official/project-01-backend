@@ -48,14 +48,6 @@ router.patch(
   bookingController.updateBooking
 );
 
-// Delete booking
-router.delete(
-  "/:id",
-  validateToken(...Object.values(Role)),
-  validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
-  bookingController.deleteBooking
-);
-
 // Export booking routes
 const bookingRoutes = router;
 export default bookingRoutes;
