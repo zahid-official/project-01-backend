@@ -43,15 +43,17 @@ const failedPayment = catchAsync(
 // Canceled payment handler
 const canceledPayment = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await paymentService.canceledPayment();
+    const transactionId = req?.query.transactionId as string;
+    const amount = req?.query?.amount;
+    const status = req?.query?.status;
+    const result = await paymentService.canceledPayment(transactionId);
 
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Payment was cancelled by the user",
-      data: result,
-    });
+    // Redirect to frontend with query params
+    if (result.canceled) {
+      res.redirect(
+        `${envVars.SSL.FAILED_FRONTEND_URL}/payment/success?transactionId=${transactionId}&amount=${amount}&status=${status}`
+      );
+    }
   }
 );
 

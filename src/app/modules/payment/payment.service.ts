@@ -97,9 +97,45 @@ const failedPayment = async (transactionId: string) => {
   }
 };
 
-// Canceld payment handler
-const canceledPayment = async () => {
-  return {};
+// Canceled payment handler
+const canceledPayment = async (transactionId: string) => {
+  // Start a session for transaction
+  const session = await Booking.startSession();
+  session.startTransaction();
+
+  try {
+    // Update payment status to CANCELED
+    const modifiedPayment = await Payment.findOneAndUpdate(
+      { transactionId },
+      { status: PaymentStatus.CANCELED },
+      { new: true, runValidators: true, session }
+    );
+
+    // Check if payment record exists
+    if (!modifiedPayment) {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        "Payment record not found for the given transaction ID"
+      );
+    }
+
+    // Update booking status to CANCELED
+    await Booking.findByIdAndUpdate(
+      modifiedPayment?.bookingId,
+      { status: BookingStatus.CANCELED },
+      { new: true, runValidators: true, session }
+    );
+
+    // Commit transaction and end session
+    await session.commitTransaction();
+    session.endSession();
+    return { canceled: true, message: "Payment was canceled by the user" };
+  } catch (error) {
+    // Abort transaction and rollback changes
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 // Payment service object

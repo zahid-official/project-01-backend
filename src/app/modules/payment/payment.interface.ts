@@ -7,7 +7,7 @@ export enum PaymentStatus {
   UNPAID = "UNPAID",
   FAILED = "FAILED",
   REFUNDED = "REFUNDED",
-  CANCELLED = "CANCELLED",
+  CANCELED = "CANCELED",
 }
 
 // Payment interface definition
