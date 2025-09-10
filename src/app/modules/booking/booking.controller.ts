@@ -96,7 +96,6 @@ const updateBooking = catchAsync(
   }
 );
 
-
 // Booking controller object
 const bookingController = {
   getAllBookings,
