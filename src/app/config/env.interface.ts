@@ -26,12 +26,12 @@ interface EnvConfig {
     VALIDATION_API: string;
 
     SUCCESS_BACKEND_URL: string;
-    FAIL_BACKEND_URL: string;
-    CANCEL_BACKEND_URL: string;
+    FAILED_BACKEND_URL: string;
+    CANCELED_BACKEND_URL: string;
 
     SUCCESS_FRONTEND_URL: string;
-    FAIL_FRONTEND_URL: string;
-    CANCEL_FRONTEND_URL: string;
+    FAILED_FRONTEND_URL: string;
+    CANCELED_FRONTEND_URL: string;
   };
 }
 

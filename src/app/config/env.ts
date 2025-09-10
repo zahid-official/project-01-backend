@@ -30,12 +30,12 @@ const loadEnvs = (): EnvConfig => {
     "SSL_VALIDATION_API",
 
     "SSL_SUCCESS_BACKEND_URL",
-    "SSL_FAIL_BACKEND_URL",
-    "SSL_CANCEL_BACKEND_URL",
+    "SSL_FAILED_BACKEND_URL",
+    "SSL_CANCELED_BACKEND_URL",
 
     "SSL_SUCCESS_FRONTEND_URL",
-    "SSL_FAIL_FRONTEND_URL",
-    "SSL_CANCEL_FRONTEND_URL",
+    "SSL_FAILED_FRONTEND_URL",
+    "SSL_CANCELED_FRONTEND_URL",
   ];
   requiredEnvs.forEach((key) => {
     if (!process.env[key]) {
@@ -72,12 +72,12 @@ const loadEnvs = (): EnvConfig => {
       VALIDATION_API: process.env.SSL_VALIDATION_API as string,
 
       SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL as string,
-      FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL as string,
-      CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL as string,
+      FAILED_BACKEND_URL: process.env.SSL_FAILED_BACKEND_URL as string,
+      CANCELED_BACKEND_URL: process.env.SSL_CANCELED_BACKEND_URL as string,
 
       SUCCESS_FRONTEND_URL: process.env.SSL_SUCCESS_FRONTEND_URL as string,
-      FAIL_FRONTEND_URL: process.env.SSL_FAIL_FRONTEND_URL as string,
-      CANCEL_FRONTEND_URL: process.env.SSL_CANCEL_FRONTEND_URL as string,
+      FAILED_FRONTEND_URL: process.env.SSL_FAILED_FRONTEND_URL as string,
+      CANCELED_FRONTEND_URL: process.env.SSL_EDCANCEL_FRONTEND_URL as string,
     },
   };
 };

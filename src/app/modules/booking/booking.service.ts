@@ -8,6 +8,8 @@ import httpStatus from "http-status-codes";
 import Booking from "./booking.model";
 import Payment from "../payment/payment.model";
 import getTransactionId from "../../utils/getTransactionId";
+import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
+import SSLService from "../sslCommerz/sslCommerz.service";
 
 // Get all bookings
 const getAllBookings = async () => {
@@ -74,10 +76,22 @@ const createBooking = async (userId: string, payload: Partial<IBooking>) => {
       .populate("tourId", "title cost")
       .populate("paymentId", "bookingId transactionId amount status");
 
+    // Initiate SSLCommerz payment
+    const bookingDetails = modifiedBooking as any;
+    const sslPayload: ISSLCommerz = {
+      name: bookingDetails?.userId?.name,
+      email: bookingDetails.userId?.email,
+      phone: bookingDetails?.userId?.phone,
+      address: bookingDetails?.userId?.address,
+      amount: bookingDetails?.paymentId?.amount,
+      transactionId: bookingDetails?.paymentId?.transactionId,
+    };
+    const sslCommerz = await SSLService.sslCommerz(sslPayload);
+
     // Commit transaction and end session
     await session.commitTransaction();
     session.endSession();
-    return modifiedBooking;
+    return { paymentUrl: sslCommerz?.GatewayPageURL, booking: modifiedBooking };
   } catch (error) {
     // Abort transaction and rollback changes
     await session.abortTransaction();
