@@ -16,9 +16,9 @@ const sslCommerz = async (payload: ISSLCommerz) => {
       currency: "BDT",
       tran_id: payload.transactionId,
 
-      success_url: envVars.SSL.SUCCESS_BACKEND_URL,
-      fail_url: envVars.SSL.FAILED_BACKEND_URL,
-      cancel_url: envVars.SSL.CANCELED_BACKEND_URL,
+      success_url: `${envVars.SSL.SUCCESS_BACKEND_URL}?transactionId=${payload.transactionId}&amount=${payload.amount}&status=success`,
+      fail_url: `${envVars.SSL.FAILED_BACKEND_URL}?transactionId=${payload.transactionId}&amount=${payload.amount}&status=failed`,
+      cancel_url: `${envVars.SSL.CANCELED_BACKEND_URL}?transactionId=${payload.transactionId}&amount=${payload.amount}&status=canceled`,
       // ipn_url: "",
 
       cus_name: payload.name,

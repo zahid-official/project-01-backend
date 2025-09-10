@@ -4,19 +4,22 @@ import httpStatus from "http-status-codes";
 import paymentService from "./payment.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
+import envVars from "../../config/env";
 
 // Success payment handler
 const successPayment = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await paymentService.successPayment();
+    const transactionId = req?.query.transactionId as string;
+    const amount = req?.query?.amount;
+    const status = req?.query?.status;
+    const result = await paymentService.successPayment(transactionId);
 
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Payment processed successfully",
-      data: result,
-    });
+    // Redirect to frontend with query params
+    if (result.success) {
+      res.redirect(
+        `${envVars.SSL.SUCCESS_FRONTEND_URL}/payment/success?transactionId=${transactionId}&amount=${amount}&status=${status}`
+      );
+    }
   }
 );
 
