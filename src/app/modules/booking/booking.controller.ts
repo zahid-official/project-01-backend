@@ -9,7 +9,10 @@ import sendResponse from "../../utils/sendResponse";
 // Get all bookings
 const getAllBookings = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await bookingService.getAllBookings();
+    const query = req?.query;
+    const result = await bookingService.getAllBookings(
+      query as Record<string, string>
+    );
 
     // Send response
     sendResponse(res, {

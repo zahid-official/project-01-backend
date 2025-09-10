@@ -10,12 +10,28 @@ import Payment from "../payment/payment.model";
 import getTransactionId from "../../utils/getTransactionId";
 import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
 import SSLService from "../sslCommerz/sslCommerz.service";
+import QueryBuilder from "../../utils/queryBuilder";
 
 // Get all bookings
-const getAllBookings = async () => {
+const getAllBookings = async (query: Record<string, string>) => {
+  // Define searchable fields
+  const searchFields = ["status"];
+
+  // Build the query using QueryBuilder class and fetch bookings
+  const queryBuilder = new QueryBuilder<IBooking>(Booking.find(), query);
+  const bookings = await queryBuilder
+    .filter()
+    .fieldSelect()
+    .sort()
+    .search(searchFields)
+    .paginate()
+    .build();
+
+  // Get meta data for pagination
+  const meta = await queryBuilder.meta();
   return {
-    data: { data: 0 },
-    meta: { meta: 0 },
+    data: bookings,
+    meta,
   };
 };
 
