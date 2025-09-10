@@ -49,7 +49,8 @@ const getMyBookings = catchAsync(
 // Get single bookings
 const getSingleBooking = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await bookingService.getSingleBooking();
+    const bookingId = req?.params?.id;
+    const result = await bookingService.getSingleBooking(bookingId);
 
     // Send response
     sendResponse(res, {

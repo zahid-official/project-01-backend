@@ -62,8 +62,11 @@ const getMyBookings = async (userId: string, query: Record<string, string>) => {
 };
 
 // Get single bookings
-const getSingleBooking = async () => {
-  return {};
+const getSingleBooking = async (bookingId: string) => {
+  const booking = await Booking.findById(bookingId);
+  return {
+    data: booking,
+  };
 };
 
 // Create new booking
