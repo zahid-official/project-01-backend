@@ -14,6 +14,9 @@ const router = Router();
 // Get all tourTypes
 router.get("/", tourTypeController.getAllTourTypes);
 
+// Get single tourType
+router.get("/:id", tourTypeController.getSingleTourType);
+
 // Create new tourType
 router.post(
   "/create",

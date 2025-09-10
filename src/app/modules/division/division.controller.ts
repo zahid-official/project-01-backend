@@ -9,7 +9,10 @@ import sendResponse from "../../utils/sendResponse";
 // Get all divisions
 const getAllDivisions = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await divisionService.getAllDivisions();
+    const query = req?.query;
+    const result = await divisionService.getAllDivisions(
+      query as Record<string, string>
+    );
 
     // Send response
     sendResponse(res, {

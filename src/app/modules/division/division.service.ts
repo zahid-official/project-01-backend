@@ -2,14 +2,28 @@ import AppError from "../../errors/AppError";
 import httpStatus from "http-status-codes";
 import Division from "./division.model";
 import { IDivision } from "./division.interface";
+import QueryBuilder from "../../utils/queryBuilder";
 
 // Get all divisions
-const getAllDivisions = async () => {
-  const divisions = await Division.find();
-  const totalDivisions = await Division.countDocuments();
+const getAllDivisions = async (query: Record<string, string>) => {
+  // Define searchable fields
+  const searchFields = ["name", "description"];
+
+  // Build the query using QueryBuilder class and fetch divisions
+  const queryBuilder = new QueryBuilder<IDivision>(Division.find(), query);
+  const divisions = await queryBuilder
+    .sort()
+    .filter()
+    .paginate()
+    .fieldSelect()
+    .search(searchFields)
+    .build();
+
+  // Get meta data for pagination
+  const meta = await queryBuilder.meta();
   return {
     data: divisions,
-    meta: { total: totalDivisions },
+    meta,
   };
 };
 

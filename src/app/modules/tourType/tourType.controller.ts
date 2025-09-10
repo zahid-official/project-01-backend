@@ -9,7 +9,10 @@ import sendResponse from "../../utils/sendResponse";
 // Get all tourTypes
 const getAllTourTypes = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await tourTypeService.getAllTourTypes();
+    const query = req?.query;
+    const result = await tourTypeService.getAllTourTypes(
+      query as Record<string, string>
+    );
 
     // Send response
     sendResponse(res, {
@@ -18,6 +21,22 @@ const getAllTourTypes = catchAsync(
       message: "All tourTypes retrieved successfully",
       data: result.data,
       meta: result.meta,
+    });
+  }
+);
+
+// Get single tourType
+const getSingleTourType = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req?.params?.id;
+    const result = await tourTypeService.getSingleTourType(id);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "All tourTypes retrieved successfully",
+      data: result.data,
     });
   }
 );
@@ -75,6 +94,7 @@ const deleteTourType = catchAsync(
 // TourType controller object
 const tourTypeController = {
   getAllTourTypes,
+  getSingleTourType,
   createTourType,
   updateTourType,
   deleteTourType,

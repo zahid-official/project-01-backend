@@ -5,6 +5,39 @@ import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
 import envVars from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import QueryBuilder from "../../utils/queryBuilder";
+
+// Retrieve all users
+const retrieveAllUsers = async (query: Record<string, string>) => {
+  // Define searchable fields
+  const searchFields = ["name", "email"];
+
+  // Build the query using QueryBuilder class and fetch users
+  const queryBuilder = new QueryBuilder<IUser>(User.find(), query);
+  const users = await queryBuilder
+    .sort()
+    .filter()
+    .paginate()
+    .fieldSelect()
+    .search(searchFields)
+    .build();
+
+  // Get meta data for pagination
+  const meta = await queryBuilder.meta();
+
+  return {
+    data: users,
+    meta,
+  };
+};
+
+// Retrieve single user
+const retrieveSingleUser = async (id: string) => {
+  const user = await User.findById(id);
+  return {
+    data: user,
+  };
+};
 
 // Register new user
 const registerUser = async (payload: Partial<IUser>) => {
@@ -36,16 +69,6 @@ const registerUser = async (payload: Partial<IUser>) => {
     ...rest,
   });
   return user;
-};
-
-// Retrieve all users
-const retrieveAllUsers = async () => {
-  const users = await User.find();
-  const totalUsers = await User.countDocuments();
-  return {
-    data: users,
-    meta: { total: totalUsers },
-  };
 };
 
 // Modify user details
@@ -111,8 +134,9 @@ const modifyUserDetails = async (
 
 // User service object
 const userService = {
-  registerUser,
   retrieveAllUsers,
+  retrieveSingleUser,
+  registerUser,
   modifyUserDetails,
 };
 
