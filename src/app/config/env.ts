@@ -77,7 +77,7 @@ const loadEnvs = (): EnvConfig => {
 
       SUCCESS_FRONTEND_URL: process.env.SSL_SUCCESS_FRONTEND_URL as string,
       FAILED_FRONTEND_URL: process.env.SSL_FAILED_FRONTEND_URL as string,
-      CANCELED_FRONTEND_URL: process.env.SSL_EDCANCEL_FRONTEND_URL as string,
+      CANCELED_FRONTEND_URL: process.env.SSL_CANCELED_FRONTEND_URL as string,
     },
   };
 };

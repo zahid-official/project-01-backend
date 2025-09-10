@@ -26,15 +26,17 @@ const successPayment = catchAsync(
 // Failed payment handler
 const failedPayment = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await paymentService.failedPayment();
+    const transactionId = req?.query.transactionId as string;
+    const amount = req?.query?.amount;
+    const status = req?.query?.status;
+    const result = await paymentService.failedPayment(transactionId);
 
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Payment processing failed",
-      data: result,
-    });
+    // Redirect to frontend with query params
+    if (result.failed) {
+      res.redirect(
+        `${envVars.SSL.FAILED_FRONTEND_URL}/payment/success?transactionId=${transactionId}&amount=${amount}&status=${status}`
+      );
+    }
   }
 );
 

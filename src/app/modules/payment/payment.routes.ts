@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/success", paymentController.successPayment);
 router.post("/failed", paymentController.failedPayment);
-router.post("/cancelled", paymentController.canceledPayment);
+router.post("/canceled", paymentController.canceledPayment);
 
 // Export payment routes
 const paymentRoutes = router;

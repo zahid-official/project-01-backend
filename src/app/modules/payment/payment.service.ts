@@ -57,8 +57,44 @@ const successPayment = async (transactionId: string) => {
 };
 
 // Failed payment handler
-const failedPayment = async () => {
-  return {};
+const failedPayment = async (transactionId: string) => {
+  // Start a session for transaction
+  const session = await Booking.startSession();
+  session.startTransaction();
+
+  try {
+    // Update payment status to FAILED
+    const modifiedPayment = await Payment.findOneAndUpdate(
+      { transactionId },
+      { status: PaymentStatus.FAILED },
+      { new: true, runValidators: true, session }
+    );
+
+    // Check if payment record exists
+    if (!modifiedPayment) {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        "Payment record not found for the given transaction ID"
+      );
+    }
+
+    // Update booking status to FAILED
+    await Booking.findByIdAndUpdate(
+      modifiedPayment?.bookingId,
+      { status: BookingStatus.FAILED },
+      { new: true, runValidators: true, session }
+    );
+
+    // Commit transaction and end session
+    await session.commitTransaction();
+    session.endSession();
+    return { failed: true, message: "Payment processing failed" };
+  } catch (error) {
+    // Abort transaction and rollback changes
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 // Canceld payment handler
