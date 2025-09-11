@@ -7,6 +7,7 @@ import {
 import validateToken from "../../middlewares/validateToken";
 import { Role } from "../user/user.interface";
 import validateSchema from "../../middlewares/validateSchema";
+import multerUpload from "../../config/multer";
 
 // Initialize router
 const router = Router();
@@ -21,6 +22,7 @@ router.get("/:slug", divisionController.getSingleDivision);
 router.post(
   "/create",
   validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+  multerUpload.single("file"),
   validateSchema(createDivisionZodSchema),
   divisionController.createDivision
 );

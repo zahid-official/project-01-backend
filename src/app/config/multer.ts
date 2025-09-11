@@ -9,13 +9,12 @@ const storage = new CloudinaryStorage({
     public_id: (req, file) => {
       // Generate a unique file name
       const fileName = file.originalname
+        .split(".")
+        .slice(0, -1)
+        .join(".")
         .toLowerCase()
         .replace(/\s+/g, "-")
-        .replace(/\./g, "-")
-        .replace(/[^a-zA-Z0-9.-]/g, "");
-
-      // Get the file extension
-      const extention = file.originalname.split(".").pop();
+        .replace(/[^a-zA-Z0-9-]/g, "");
 
       // Return the unique file name
       const uniqueFileName =
@@ -23,9 +22,7 @@ const storage = new CloudinaryStorage({
         "-" +
         Date.now() +
         "-" +
-        fileName +
-        "." +
-        extention;
+        fileName;
 
       return uniqueFileName;
     },
