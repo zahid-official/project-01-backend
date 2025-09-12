@@ -1,8 +1,8 @@
 import z from "zod";
 import { AccountStatus, Role } from "./user.interface";
 
-// Zod scheme for new user creation
-export const createUserZodSchema = z.object({
+// Zod scheme for new user registration
+export const registerUserZodSchema = z.object({
   // Name
   name: z
     .string({
