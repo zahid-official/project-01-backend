@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import AppError from "../../errors/AppError";
-import { AccountStatus } from "../user/user.interface";
+import { AccountStatus, IAuthProvider } from "../user/user.interface";
 import User from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
@@ -54,6 +54,60 @@ const regenerateAccessToken = async (refreshToken: string) => {
   return { accessToken };
 };
 
+// Set password
+const setPassword = async (userId: string, password: string) => {
+  const user = await User.findById(userId);
+
+  // Check if user exists
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  // Check if user has credentials auth provider
+  if (
+    !user.auths.some((auth) => auth.provider === "google") &&
+    user.auths.some((auth) => auth.provider === "credentials")
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Only users without credentials auth provider can set password"
+    );
+  }
+
+  // Check if password is already set for Google authenticated user
+  if (user?.password && user.auths.some((auth) => auth.provider === "google")) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password is already set for Google authenticated user"
+    );
+  }
+
+  // Hash the password to store in database
+  const hashedPassword = await bcrypt.hash(
+    password,
+    parseInt(envVars.BCRYPT_SALT_ROUNDS)
+  );
+
+  // Add credentials auth provider to auths array
+  const credentialsAuth: IAuthProvider = {
+    provider: "credentials",
+    providerId: user.email,
+  };
+  const auths = [...user.auths, credentialsAuth];
+
+  // Update user password and auths array
+  user.password = hashedPassword;
+  user.auths = auths;
+  await user.save();
+
+  return null;
+};
+
+// Reset password
+const resetPassword = async () => {
+  return null;
+};
+
 // Change password
 const changePassword = async (
   decodedToken: JwtPayload,
@@ -83,16 +137,12 @@ const changePassword = async (
   return null;
 };
 
-// Reset password
-const resetPassword = async () => {
-  return null;
-};
-
 // Auth service object
 const authService = {
   regenerateAccessToken,
-  changePassword,
+  setPassword,
   resetPassword,
+  changePassword,
 };
 
 export default authService;
