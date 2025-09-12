@@ -28,6 +28,7 @@ router.post(
 router.patch(
   "/:id",
   validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+  multerUpload.array("files"),
   validateSchema(updateTourZodSchema),
   tourController.updateTour
 );

@@ -3,6 +3,7 @@ import { ITour } from "./tour.interface";
 import httpStatus from "http-status-codes";
 import AppError from "../../errors/AppError";
 import QueryBuilder from "../../utils/queryBuilder";
+import { cloudinaryDelete } from "../../config/cloudinary";
 
 // Get all tours
 const getAllTours = async (query: Record<string, string>) => {
@@ -52,26 +53,84 @@ const createTour = async (payload: ITour) => {
 
 // Update tour details
 const updateTour = async (tourId: string, payload: Partial<ITour>) => {
-  // Check if tour exists
-  const isTourExists = await Tour.findById(tourId);
-  if (!isTourExists) {
-    throw new AppError(httpStatus.NOT_FOUND, "Tour not found");
+  // Start a session for transaction
+  const session = await Tour.startSession();
+  session.startTransaction();
+
+  try {
+    // Check if tour exists
+    const tour = await Tour.findById(tourId);
+    if (!tour) {
+      throw new AppError(httpStatus.NOT_FOUND, "Tour not found");
+    }
+
+    // Check if the updated title conflicts with another existing tour
+    if (tour.title === payload.title) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `Title '${payload.title}' already exists. Please provide a different title to update`
+      );
+    }
+
+    // Merge new images with existing images
+    if (
+      payload.images &&
+      payload.images.length > 0 &&
+      tour.images &&
+      tour.images.length > 0
+    ) {
+      payload.images = [...payload.images, ...tour.images];
+    }
+
+    // Handle image deletions
+    if (
+      payload.deleteImages &&
+      payload.deleteImages.length > 0 &&
+      tour.images &&
+      tour.images.length > 0
+    ) {
+      // Filter out images to be deleted from existing images in database (if only deletion is requested)
+      const restDatabaseImages = tour.images.filter(
+        (image) => !payload.deleteImages?.includes(image)
+      );
+
+      // Filter out deletable and duplicate images from payload (if both addition and deletion is requested)
+      const filteredPayloadImages = (payload.images || [])
+        .filter((image) => !payload.deleteImages?.includes(image))
+        .filter((image) => !restDatabaseImages?.includes(image));
+
+      payload.images = [...restDatabaseImages, ...filteredPayloadImages];
+    }
+
+    // Update tour details
+    const modifiedDetails = await Tour.findByIdAndUpdate(tourId, payload, {
+      new: true,
+      runValidators: true,
+      session,
+    });
+
+    // Delete old images from cloudinary if new images are uploaded
+    if (
+      payload.deleteImages &&
+      payload.deleteImages.length > 0 &&
+      tour.images &&
+      tour.images.length > 0
+    ) {
+      await Promise.all(
+        payload.deleteImages.map((image) => cloudinaryDelete(image))
+      );
+    }
+
+    // Commit transaction and end session
+    await session.commitTransaction();
+    await session.endSession();
+    return modifiedDetails;
+  } catch (error) {
+    // Abort transaction and rollback changes
+    await session.abortTransaction();
+    await session.endSession();
+    throw error;
   }
-
-  // Check if the updated title conflicts with another existing tour
-  if (isTourExists.title === payload.title) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `Title '${payload.title}' already exists. Please provide a different title to update`
-    );
-  }
-
-  const modifiedDetails = await Tour.findByIdAndUpdate(tourId, payload, {
-    new: true,
-    runValidators: true,
-  });
-
-  return modifiedDetails;
 };
 
 // Delete tour

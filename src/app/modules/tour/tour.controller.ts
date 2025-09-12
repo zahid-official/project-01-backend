@@ -64,9 +64,12 @@ const createTour = catchAsync(
 const updateTour = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const tourId = req?.params?.id;
-    const body = req?.body;
+    const payload = {
+      ...req?.body,
+      images: (req?.files as Express.Multer.File[]).map((file) => file?.path),
+    };
 
-    const result = await tourService.updateTour(tourId, body);
+    const result = await tourService.updateTour(tourId, payload);
 
     // Send response
     sendResponse(res, {

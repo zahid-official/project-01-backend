@@ -209,6 +209,11 @@ export const updateTourZodSchema = z.object({
     .array(z.string({ error: "Each amenity must be a string" }))
     .optional(),
 
+  // Delte Images
+  deleteImages: z
+    .array(z.string({ error: "Each image must be a string" }))
+    .optional(),
+
   // Division
   divisionId: z
     .string({ error: "Division ID must be a string" })
