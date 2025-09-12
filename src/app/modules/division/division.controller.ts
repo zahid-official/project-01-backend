@@ -62,9 +62,9 @@ const createDivision = catchAsync(
 const updateDivision = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const divisionId = req?.params?.id;
-    const body = req?.body;
+    const payload: IDivision = { ...req.body, thumbnail: req.file?.path };
 
-    const result = await divisionService.updateDivision(divisionId, body);
+    const result = await divisionService.updateDivision(divisionId, payload);
 
     // Send response
     sendResponse(res, {

@@ -31,6 +31,7 @@ router.post(
 router.patch(
   "/:id",
   validateToken(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+  multerUpload.single("file"),
   validateSchema(updateDivisionZodSchema),
   divisionController.updateDivision
 );
