@@ -82,7 +82,7 @@ const updateTour = async (tourId: string, payload: Partial<ITour>) => {
       payload.images = [...payload.images, ...tour.images];
     }
 
-    // Handle image deletions
+    // Handle image addition and deletions together
     if (
       payload.deleteImages &&
       payload.deleteImages.length > 0 &&
@@ -109,7 +109,7 @@ const updateTour = async (tourId: string, payload: Partial<ITour>) => {
       session,
     });
 
-    // Delete old images from cloudinary if new images are uploaded
+    // Remove deleted images from cloudinary
     if (
       payload.deleteImages &&
       payload.deleteImages.length > 0 &&

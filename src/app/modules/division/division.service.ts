@@ -75,6 +75,7 @@ const updateDivision = async (
       );
     }
 
+    // Update division details
     const modifiedDetails = await Division.findByIdAndUpdate(
       divisionId,
       payload,
@@ -85,6 +86,7 @@ const updateDivision = async (
       }
     );
 
+    // Delete old thumbnail from cloudinary if new thumbnail is uploaded
     if (division.thumbnail && payload.thumbnail) {
       await cloudinaryDelete(division.thumbnail);
     }
