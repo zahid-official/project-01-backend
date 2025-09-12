@@ -13,10 +13,10 @@ import envVars from "../../config/env";
 import passport from "passport";
 
 // Regenerate access token
-const regenerateToken = catchAsync(
+const regenerateAccessToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
-    const result = await authService.renewAccessToken(refreshToken);
+    const result = await authService.regenerateAccessToken(refreshToken);
 
     // Set token in cookies
     setCookies(res, result);
@@ -27,44 +27,6 @@ const regenerateToken = catchAsync(
       statusCode: httpStatus.OK,
       message: "Access token regenerated successfully",
       data: null,
-    });
-  }
-);
-
-// Logout user
-const logout = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // Clear cookies
-    clearCookies(res);
-
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "User logged out successfully",
-      data: null,
-    });
-  }
-);
-
-// Reset password
-const resetPassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const decodedToken = req?.decodedToken;
-    const { oldPassword, newPassword } = req?.body || {};
-
-    const result = await authService.changePassword(
-      decodedToken,
-      oldPassword,
-      newPassword
-    );
-
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Password reset successful",
-      data: result,
     });
   }
 );
@@ -149,14 +111,68 @@ const googleCallback = catchAsync(
   }
 );
 
+// Logout user
+const logout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Clear cookies
+    clearCookies(res);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User logged out successfully",
+      data: null,
+    });
+  }
+);
+
+// Change password
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req?.decodedToken;
+    const { oldPassword, newPassword } = req?.body || {};
+
+    const result = await authService.changePassword(
+      decodedToken,
+      oldPassword,
+      newPassword
+    );
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password reset successful",
+      data: result,
+    });
+  }
+);
+
+// Reset password
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await authService.resetPassword();
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password reset successful",
+      data: result,
+    });
+  }
+);
+
 // Auth controller object
 const authController = {
+  regenerateAccessToken,
   credentialsLogin,
-  regenerateToken,
-  logout,
-  resetPassword,
   googleLogin,
   googleCallback,
+  logout,
+  changePassword,
+  resetPassword,
 };
 
 export default authController;

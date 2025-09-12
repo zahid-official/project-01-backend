@@ -1,7 +1,7 @@
 import z from "zod";
 
-// Zod scheme for resetting password
-export const resetPasswordZodSchema = z.object({
+// Zod scheme for change password
+export const changePasswordZodSchema = z.object({
   // Old password
   oldPassword: z
     .string({

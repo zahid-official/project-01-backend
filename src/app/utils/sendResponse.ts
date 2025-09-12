@@ -1,7 +1,12 @@
 import { Response } from "express";
 
 // Meta information interface
-type TMeta = Record<string, number>;
+interface TMeta {
+  page: number;
+  limit: number;
+  totalPage: number;
+  totalDocs: number;
+}
 
 // Response payload interface
 interface IResponse<T> {

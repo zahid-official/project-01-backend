@@ -10,8 +10,8 @@ import { verifyJWT } from "../../utils/JWT";
 import envVars from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 
-// Renew access token using refresh token
-const renewAccessToken = async (refreshToken: string) => {
+// Regenerate access token using refresh token
+const regenerateAccessToken = async (refreshToken: string) => {
   // Check if refresh token is provided
   if (!refreshToken) {
     throw new AppError(
@@ -51,7 +51,6 @@ const renewAccessToken = async (refreshToken: string) => {
 
   // Recrete JWT access token
   const accessToken = recreateToken(user);
-
   return { accessToken };
 };
 
@@ -84,10 +83,16 @@ const changePassword = async (
   return null;
 };
 
+// Reset password
+const resetPassword = async () => {
+  return null;
+};
+
 // Auth service object
 const authService = {
-  renewAccessToken,
+  regenerateAccessToken,
   changePassword,
+  resetPassword,
 };
 
 export default authService;
