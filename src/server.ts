@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
 
+import app from "./app";
 import { Server } from "http";
 import mongoose from "mongoose";
-import app from "./app";
 import envVars from "./app/config/env";
+import connectRedis from "./app/config/redis";
 import superAdmin from "./app/utils/superAdmin";
 
 let server: Server;
@@ -32,6 +33,7 @@ const bootstrap = async () => {
 
 // Initialize the application
 (async () => {
+  await connectRedis();
   await bootstrap();
   await superAdmin();
 })();

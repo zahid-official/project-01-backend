@@ -46,6 +46,11 @@ const loadEnvs = (): EnvConfig => {
     "SMTP_PASS",
     "SMTP_USER",
     "SMTP_FROM",
+
+    "RADIS_USERNAME",
+    "RADIS_PASSWORD",
+    "RADIS_HOST",
+    "RADIS_PORT",
   ];
   requiredEnvs.forEach((key) => {
     if (!process.env[key]) {
@@ -102,6 +107,13 @@ const loadEnvs = (): EnvConfig => {
       SMTP_PASS: process.env.SMTP_PASS as string,
       SMTP_USER: process.env.SMTP_USER as string,
       SMTP_FROM: process.env.SMTP_FROM as string,
+    },
+
+    RADIS: {
+      HOST: process.env.RADIS_HOST as string,
+      PORT: process.env.RADIS_PORT as string,
+      USERNAME: process.env.RADIS_USERNAME as string,
+      PASSWORD: process.env.RADIS_PASSWORD as string,
     },
   };
 };

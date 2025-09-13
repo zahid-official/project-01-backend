@@ -47,6 +47,13 @@ interface EnvConfig {
     SMTP_USER: string;
     SMTP_FROM: string;
   };
+
+  RADIS: {
+    HOST: string;
+    PORT: string;
+    USERNAME: string;
+    PASSWORD: string;
+  };
 }
 
 export default EnvConfig;
