@@ -61,3 +61,18 @@ export const setPasswordZodSchema = z.object({
     })
     .trim(),
 });
+
+// Zod scheme for forgot password
+export const forgotPasswordZodSchema = z.object({
+  // Email
+  email: z
+    .email({
+      error: (issue) =>
+        issue.input === undefined
+          ? "Email is required"
+          : "Invalid email format",
+    })
+    .min(5, { error: "Email must be at least 5 characters long." })
+    .max(100, { error: "Email cannot exceed 100 characters." })
+    .trim(),
+});

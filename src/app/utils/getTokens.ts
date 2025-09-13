@@ -47,4 +47,18 @@ export const recreateToken = (user: Partial<IUser>) => {
   return accessToken;
 };
 
+// Generate reset token
+export const generateResetToken = (user: Partial<IUser>) => {
+  // Payload
+  const jwtPayload = {
+    userId: user._id,
+    email: user.email,
+    role: user.role,
+  };
+
+  // Generate JWT reset token
+  const resetToken = generateJWT(jwtPayload, envVars.JWT_ACCESS_SECRET, "10m");
+  return resetToken;
+};
+
 export default getTokens;

@@ -4,6 +4,7 @@ import { Role } from "../user/user.interface";
 import authController from "./auth.controller";
 import {
   changePasswordZodSchema,
+  forgotPasswordZodSchema,
   setPasswordZodSchema,
 } from "./auth.validation";
 import validateToken from "../../middlewares/validateToken";
@@ -45,6 +46,11 @@ router.patch(
   validateToken(...Object.values(Role)),
   validateSchema(changePasswordZodSchema),
   authController.changePassword
+);
+router.patch(
+  "/forgot-password",
+  validateSchema(forgotPasswordZodSchema),
+  authController.forgotPassword
 );
 
 // Export auth routes

@@ -5,10 +5,11 @@ import { AccountStatus, IAuthProvider } from "../user/user.interface";
 import User from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcryptjs";
-import { recreateToken } from "../../utils/getTokens";
+import { generateResetToken, recreateToken } from "../../utils/getTokens";
 import { verifyJWT } from "../../utils/JWT";
 import envVars from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import { sendEmail } from "../../utils/sendEmail";
 
 // Regenerate access token using refresh token
 const regenerateAccessToken = async (refreshToken: string) => {
@@ -33,6 +34,14 @@ const regenerateAccessToken = async (refreshToken: string) => {
     throw new AppError(httpStatus.UNAUTHORIZED, "User does not exist");
   }
 
+  // Check if user is verified
+  if (!user.isVerified) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "User is not verified. Please verify your email to proceed."
+    );
+  }
+
   // Check if user is blocked or inactive
   if (
     user.accountStatus === AccountStatus.BLOCKED ||
@@ -40,13 +49,16 @@ const regenerateAccessToken = async (refreshToken: string) => {
   ) {
     throw new AppError(
       httpStatus.UNAUTHORIZED,
-      `User is ${user.accountStatus}`
+      `User is ${user.accountStatus}. Please contact support for more information.`
     );
   }
 
   // Check if user is deleted
   if (user.isDeleted) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "User is deleted");
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "User is deleted. Please contact support for more information."
+    );
   }
 
   // Recrete JWT access token
@@ -137,12 +149,66 @@ const changePassword = async (
   return null;
 };
 
+// Forgot password
+const forgotPassword = async (email: string) => {
+  const user = await User.findOne({ email });
+  // Check if user exists
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  // Check if user is verified
+  if (!user.isVerified) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "User is not verified. Please verify your email to proceed."
+    );
+  }
+
+  // Check if user is blocked or inactive
+  if (
+    user.accountStatus === AccountStatus.BLOCKED ||
+    user.accountStatus === AccountStatus.INACTIVE
+  ) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      `User is ${user.accountStatus}. Please contact support for more information.`
+    );
+  }
+
+  // Check if user is deleted
+  if (user.isDeleted) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "User is deleted. Please contact support for more information."
+    );
+  }
+
+  // generate reset token
+  const resetToken = generateResetToken(user);
+
+  sendEmail({
+    to: user.email,
+    subject: "Password Reset Request",
+    templateName: "forgotPassword",
+    templateData: {
+      name: user.name,
+      expiryTime: 10,
+      companyName: "Wandora",
+      resetLink: `${envVars.FRONTEND_URL}/reset-password?token=${resetToken}`,
+    },
+  });
+
+  return null;
+};
+
 // Auth service object
 const authService = {
   regenerateAccessToken,
   setPassword,
   resetPassword,
   changePassword,
+  forgotPassword,
 };
 
 export default authService;

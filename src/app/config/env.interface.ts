@@ -39,6 +39,14 @@ interface EnvConfig {
     API_KEY: string;
     API_SECRET: string;
   };
+
+  EMAIL_SENDER: {
+    SMTP_PORT: string;
+    SMTP_HOST: string;
+    SMTP_PASS: string;
+    SMTP_USER: string;
+    SMTP_FROM: string;
+  };
 }
 
 export default EnvConfig;
