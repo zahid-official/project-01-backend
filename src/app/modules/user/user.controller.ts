@@ -10,9 +10,11 @@ import sendResponse from "../../utils/sendResponse";
 const getAllUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const query = req?.query;
-    const result = await userService.retrieveAllUsers(
+    const result = await userService.getAllUsers(
       query as Record<string, string>
     );
+
+    // Send response
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
@@ -23,26 +25,44 @@ const getAllUsers = catchAsync(
   }
 );
 
+// Get profile info
+const getProfileInfo = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req?.decodedToken?.userId;
+    const result = await userService.getProfileInfo(userId);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Profile info retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 // Get single user
 const getSingleUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req?.params?.id;
-    const result = await userService.retrieveSingleUser(id);
+    const result = await userService.getSingleUser(id);
 
     // Send response
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "All tourTypes retrieved successfully",
-      data: result.data,
+      data: result,
     });
   }
 );
 
 // Create new user
-const createUser = catchAsync(
+const registerUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const result = await userService.registerUser(req?.body);
+
+    // Send response
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.CREATED,
@@ -58,13 +78,9 @@ const updateUser = catchAsync(
     const userId = req?.params?.id;
     const body = req?.body;
     const decodedToken = req.decodedToken;
+    const result = await userService.updateUser(userId, body, decodedToken);
 
-    const result = await userService.modifyUserDetails(
-      userId,
-      body,
-      decodedToken
-    );
-
+    // Send response
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
@@ -77,8 +93,9 @@ const updateUser = catchAsync(
 // User controller object
 const userController = {
   getAllUsers,
+  getProfileInfo,
   getSingleUser,
-  createUser,
+  registerUser,
   updateUser,
 };
 

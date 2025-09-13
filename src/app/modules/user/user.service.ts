@@ -7,8 +7,8 @@ import envVars from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 import QueryBuilder from "../../utils/queryBuilder";
 
-// Retrieve all users
-const retrieveAllUsers = async (query: Record<string, string>) => {
+// Get all users
+const getAllUsers = async (query: Record<string, string>) => {
   // Define searchable fields
   const searchFields = ["name", "email"];
 
@@ -31,12 +31,16 @@ const retrieveAllUsers = async (query: Record<string, string>) => {
   };
 };
 
-// Retrieve single user
-const retrieveSingleUser = async (id: string) => {
-  const user = await User.findById(id);
-  return {
-    data: user,
-  };
+// Get profile info
+const getProfileInfo = async (userId: string) => {
+  const user = await User.findById(userId).select("-password");
+  return user;
+};
+
+// Get single user
+const getSingleUser = async (id: string) => {
+  const user = await User.findById(id).select("-password");
+  return user;
 };
 
 // Register new user
@@ -68,11 +72,16 @@ const registerUser = async (payload: Partial<IUser>) => {
     auths: [authProvider],
     ...rest,
   });
-  return user;
+
+  // Convert to plain object & remove password before sending response
+  const data = user.toObject();
+  delete data?.password;
+
+  return data;
 };
 
-// Modify user details
-const modifyUserDetails = async (
+// Update user details
+const updateUser = async (
   userId: string,
   payload: Partial<IUser>,
   decodedToken: JwtPayload
@@ -94,7 +103,7 @@ const modifyUserDetails = async (
     );
   }
 
-  // Only anmin and super admin can change roles
+  // Only anmin & super admin can change roles
   if (
     payload?.role &&
     (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE)
@@ -124,20 +133,26 @@ const modifyUserDetails = async (
     );
   }
 
-  const modifiedDetails = await User.findByIdAndUpdate(userId, payload, {
+  // Update user details
+  const user = await User.findByIdAndUpdate(userId, payload, {
     new: true,
     runValidators: true,
   });
 
-  return modifiedDetails;
+  // Convert to plain object & remove password before sending response
+  const data = user?.toObject();
+  delete data?.password;
+
+  return data;
 };
 
 // User service object
 const userService = {
-  retrieveAllUsers,
-  retrieveSingleUser,
+  getAllUsers,
+  getProfileInfo,
+  getSingleUser,
   registerUser,
-  modifyUserDetails,
+  updateUser,
 };
 
 export default userService;

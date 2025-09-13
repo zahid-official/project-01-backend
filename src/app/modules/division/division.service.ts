@@ -3,6 +3,7 @@ import httpStatus from "http-status-codes";
 import Division from "./division.model";
 import { IDivision } from "./division.interface";
 import QueryBuilder from "../../utils/queryBuilder";
+import { cloudinaryDelete } from "../../config/cloudinary";
 
 // Get all divisions
 const getAllDivisions = async (query: Record<string, string>) => {
@@ -55,30 +56,51 @@ const updateDivision = async (
   divisionId: string,
   payload: Partial<IDivision>
 ) => {
-  // Check if division exists
-  const isDivisionExists = await Division.findById(divisionId);
-  if (!isDivisionExists) {
-    throw new AppError(httpStatus.NOT_FOUND, "Division not found");
-  }
+  // Start a session for transaction
+  const session = await Division.startSession();
+  session.startTransaction();
 
-  // Check if the updated name conflicts with another existing division
-  if (isDivisionExists.name === payload.name) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `Division '${payload.name}' already exists. Please provide a different division name to update`
-    );
-  }
-
-  const modifiedDetails = await Division.findByIdAndUpdate(
-    divisionId,
-    payload,
-    {
-      new: true,
-      runValidators: true,
+  try {
+    // Check if division exists
+    const division = await Division.findById(divisionId);
+    if (!division) {
+      throw new AppError(httpStatus.NOT_FOUND, "Division not found");
     }
-  );
 
-  return modifiedDetails;
+    // Check if the updated name conflicts with another existing division
+    if (division.name === payload.name) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `Division '${payload.name}' already exists. Please provide a different division name to update`
+      );
+    }
+
+    // Update division details
+    const modifiedDetails = await Division.findByIdAndUpdate(
+      divisionId,
+      payload,
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    // Delete old thumbnail from cloudinary if new thumbnail is uploaded
+    if (division.thumbnail && payload.thumbnail) {
+      await cloudinaryDelete(division.thumbnail);
+    }
+
+    // Commit transaction and end session
+    await session.commitTransaction();
+    session.endSession();
+    return modifiedDetails;
+  } catch (error) {
+    // Abort transaction and rollback changes
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 // Delete division
