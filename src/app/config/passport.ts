@@ -8,7 +8,7 @@ import {
 } from "passport-google-oauth20";
 import envVars from "./env";
 import User from "../modules/user/user.model";
-import { Role } from "../modules/user/user.interface";
+import { AccountStatus, Role } from "../modules/user/user.interface";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
 
@@ -38,6 +38,31 @@ passport.use(
 
         // Check if user already exists
         let user = await User.findOne({ email });
+
+        // Check if user is verified
+        if (!user?.isVerified) {
+          return done(null, false, {
+            message: `User is not verified. Please verify your email to proceed.`,
+          });
+        }
+
+        // Check if user is blocked or inactive
+        if (
+          user?.accountStatus === AccountStatus.BLOCKED ||
+          user?.accountStatus === AccountStatus.INACTIVE
+        ) {
+          return done(null, false, {
+            message: `User is ${user.accountStatus}. Please contact support for more information.`,
+          });
+        }
+
+        // Check if user is deleted
+        if (user?.isDeleted) {
+          return done(null, false, {
+            message: `User is deleted. Please contact support for more information.`,
+          });
+        }
+
         if (!user) {
           // If not, create a new user
           user = await User.create({
@@ -78,6 +103,30 @@ passport.use(
         const user = await User.findOne({ email });
         if (!user) {
           return done(null, false, { message: "User does not exist" });
+        }
+
+        // Check if user is verified
+        if (!user.isVerified) {
+          return done(null, false, {
+            message: `User is not verified. Please verify your email to proceed.`,
+          });
+        }
+
+        // Check if user is blocked or inactive
+        if (
+          user.accountStatus === AccountStatus.BLOCKED ||
+          user.accountStatus === AccountStatus.INACTIVE
+        ) {
+          return done(null, false, {
+            message: `User is ${user.accountStatus}. Please contact support for more information.`,
+          });
+        }
+
+        // Check if user is deleted
+        if (user.isDeleted) {
+          return done(null, false, {
+            message: `User is deleted. Please contact support for more information.`,
+          });
         }
 
         // Check user authentication method

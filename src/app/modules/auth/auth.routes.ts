@@ -8,6 +8,7 @@ import {
 } from "./auth.validation";
 import validateToken from "../../middlewares/validateToken";
 import validateSchema from "../../middlewares/validateSchema";
+import envVars from "../../config/env";
 
 // Initialize router
 const router = Router();
@@ -16,7 +17,9 @@ const router = Router();
 router.get("/google", authController.googleLogin);
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: `${envVars.FRONTEND_URL}/login?errorMessage=There was an error during Google authentication. Please try again.`,
+  }),
   authController.googleCallback
 );
 
