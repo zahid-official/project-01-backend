@@ -1,6 +1,6 @@
 import { Router } from "express";
 import userController from "./user.controller";
-import { createUserZodSchema, updateUserZodSchema } from "./user.validation";
+import { registerUserZodSchema, updateUserZodSchema } from "./user.validation";
 import validateSchema from "../../middlewares/validateSchema";
 import validateToken from "../../middlewares/validateToken";
 import { Role } from "./user.interface";
@@ -8,24 +8,27 @@ import { Role } from "./user.interface";
 // Initialize router
 const router = Router();
 
-// Get all users
+// Get routes
 router.get(
   "/",
   validateToken(Role.ADMIN, Role.SUPER_ADMIN),
   userController.getAllUsers
 );
-
-// Get single user
+router.get(
+  "/profile",
+  validateToken(...Object.values(Role)),
+  userController.getProfileInfo
+);
 router.get("/:id", userController.getSingleUser);
 
-// Create new user
+// Post routes
 router.post(
   "/register",
-  validateSchema(createUserZodSchema),
-  userController.createUser
+  validateSchema(registerUserZodSchema),
+  userController.registerUser
 );
 
-// Update user
+// Patch routes
 router.patch(
   "/:id",
   validateToken(...Object.values(Role)),

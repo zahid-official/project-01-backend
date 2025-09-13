@@ -13,10 +13,10 @@ import envVars from "../../config/env";
 import passport from "passport";
 
 // Regenerate access token
-const regenerateToken = catchAsync(
+const regenerateAccessToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
-    const result = await authService.renewAccessToken(refreshToken);
+    const result = await authService.regenerateAccessToken(refreshToken);
 
     // Set token in cookies
     setCookies(res, result);
@@ -27,44 +27,6 @@ const regenerateToken = catchAsync(
       statusCode: httpStatus.OK,
       message: "Access token regenerated successfully",
       data: null,
-    });
-  }
-);
-
-// Logout user
-const logout = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // Clear cookies
-    clearCookies(res);
-
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "User logged out successfully",
-      data: null,
-    });
-  }
-);
-
-// Reset password
-const resetPassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const decodedToken = req?.decodedToken;
-    const { oldPassword, newPassword } = req?.body || {};
-
-    const result = await authService.changePassword(
-      decodedToken,
-      oldPassword,
-      newPassword
-    );
-
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Password reset successful",
-      data: result,
     });
   }
 );
@@ -149,14 +111,106 @@ const googleCallback = catchAsync(
   }
 );
 
+// Logout user
+const logout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Clear cookies
+    clearCookies(res);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User logged out successfully",
+      data: null,
+    });
+  }
+);
+
+// Set password
+const setPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req?.decodedToken.userId;
+    const password = req?.body?.password;
+    const result = await authService.setPassword(userId, password);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password set successfully",
+      data: result,
+    });
+  }
+);
+
+// Change password
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req?.decodedToken;
+    const { oldPassword, newPassword } = req?.body || {};
+
+    const result = await authService.changePassword(
+      decodedToken,
+      oldPassword,
+      newPassword
+    );
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password changed successfully",
+      data: result,
+    });
+  }
+);
+
+// Forgot password
+const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const email = req?.body?.email;
+    const result = await authService.forgotPassword(email);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password reset email sent successfully",
+      data: result,
+    });
+  }
+);
+
+// Reset password
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req?.body?.id;
+    const userId = req?.decodedToken.userId;
+    const newPassword = req?.body?.newPassword;
+    const result = await authService.resetPassword(userId, id, newPassword);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Password reset successfully",
+      data: result,
+    });
+  }
+);
+
 // Auth controller object
 const authController = {
+  regenerateAccessToken,
   credentialsLogin,
-  regenerateToken,
-  logout,
-  resetPassword,
   googleLogin,
   googleCallback,
+  logout,
+  setPassword,
+  changePassword,
+  forgotPassword,
+  resetPassword,
 };
 
 export default authController;

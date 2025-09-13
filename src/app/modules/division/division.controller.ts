@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import catchAsync from "../../utils/catchAsync";
 import divisionService from "./division.service";
+import { IDivision } from "./division.interface";
 import sendResponse from "../../utils/sendResponse";
 
 // Get all divisions
@@ -44,7 +45,8 @@ const getSingleDivision = catchAsync(
 // Create new division
 const createDivision = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await divisionService.createDivision(req?.body);
+    const payload: IDivision = { ...req.body, thumbnail: req.file?.path };
+    const result = await divisionService.createDivision(payload);
 
     // Send response
     sendResponse(res, {
@@ -60,9 +62,9 @@ const createDivision = catchAsync(
 const updateDivision = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const divisionId = req?.params?.id;
-    const body = req?.body;
+    const payload: IDivision = { ...req.body, thumbnail: req.file?.path };
 
-    const result = await divisionService.updateDivision(divisionId, body);
+    const result = await divisionService.updateDivision(divisionId, payload);
 
     // Send response
     sendResponse(res, {

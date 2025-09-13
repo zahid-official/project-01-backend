@@ -35,6 +35,14 @@ const validateToken = (...userRoles: string[]) =>
       throw new AppError(httpStatus.UNAUTHORIZED, "User does not exist");
     }
 
+    // Check if user is verified
+    if (!user.isVerified) {
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "User is not verified. Please verify your email to proceed."
+      );
+    }
+
     // Check if user is blocked or inactive
     if (
       user.accountStatus === AccountStatus.BLOCKED ||
@@ -42,13 +50,16 @@ const validateToken = (...userRoles: string[]) =>
     ) {
       throw new AppError(
         httpStatus.UNAUTHORIZED,
-        `User is ${user.accountStatus}`
+        `User is ${user.accountStatus}. Please contact support for more information.`
       );
     }
 
     // Check if user is deleted
     if (user.isDeleted) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "User is deleted");
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "User is deleted. Please contact support for more information."
+      );
     }
 
     // Check if user has permission to access

@@ -36,6 +36,16 @@ const loadEnvs = (): EnvConfig => {
     "SSL_SUCCESS_FRONTEND_URL",
     "SSL_FAILED_FRONTEND_URL",
     "SSL_CANCELED_FRONTEND_URL",
+
+    "CLOUDINARY_CLOUD_NAME",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET",
+
+    "SMTP_PORT",
+    "SMTP_HOST",
+    "SMTP_PASS",
+    "SMTP_USER",
+    "SMTP_FROM",
   ];
   requiredEnvs.forEach((key) => {
     if (!process.env[key]) {
@@ -78,6 +88,20 @@ const loadEnvs = (): EnvConfig => {
       SUCCESS_FRONTEND_URL: process.env.SSL_SUCCESS_FRONTEND_URL as string,
       FAILED_FRONTEND_URL: process.env.SSL_FAILED_FRONTEND_URL as string,
       CANCELED_FRONTEND_URL: process.env.SSL_CANCELED_FRONTEND_URL as string,
+    },
+
+    CLOUDINARY: {
+      CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
+      API_KEY: process.env.CLOUDINARY_API_KEY as string,
+      API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+    },
+
+    EMAIL_SENDER: {
+      SMTP_PORT: process.env.SMTP_PORT as string,
+      SMTP_HOST: process.env.SMTP_HOST as string,
+      SMTP_PASS: process.env.SMTP_PASS as string,
+      SMTP_USER: process.env.SMTP_USER as string,
+      SMTP_FROM: process.env.SMTP_FROM as string,
     },
   };
 };
