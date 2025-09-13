@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import z from "zod";
 
 // Zod scheme for change password
@@ -74,5 +75,44 @@ export const forgotPasswordZodSchema = z.object({
     })
     .min(5, { error: "Email must be at least 5 characters long." })
     .max(100, { error: "Email cannot exceed 100 characters." })
+    .trim(),
+});
+
+// Zod scheme for reset password
+export const resetPasswordZodSchema = z.object({
+  // Id
+  id: z
+    .string({
+      error: (issue) =>
+        issue.input === undefined
+          ? "Tour is required"
+          : "IB must be a string objectId",
+    })
+    .refine((value) => Types.ObjectId.isValid(value), {
+      error: "Invalid ObjectId",
+    })
+    .trim(),
+
+  // New Password
+  newPassword: z
+    .string({
+      error: (issue) =>
+        issue.input === undefined
+          ? "New password is required"
+          : "New password must be string",
+    })
+    .min(8, { error: "New password must be at least 8 characters long." })
+    .trim()
+
+    // Password complexity requirements
+    .regex(/^(?=.*[A-Z])/, {
+      error: "New password must contain at least 1 uppercase letter.",
+    })
+    .regex(/^(?=.*[!@#$%^&*])/, {
+      error: "New password must contain at least 1 special character.",
+    })
+    .regex(/^(?=.*\d)/, {
+      error: "New password must contain at least 1 number.",
+    })
     .trim(),
 });

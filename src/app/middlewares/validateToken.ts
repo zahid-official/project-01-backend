@@ -56,7 +56,10 @@ const validateToken = (...userRoles: string[]) =>
 
     // Check if user is deleted
     if (user.isDeleted) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "User is deleted. Please contact support for more information.");
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "User is deleted. Please contact support for more information."
+      );
     }
 
     // Check if user has permission to access

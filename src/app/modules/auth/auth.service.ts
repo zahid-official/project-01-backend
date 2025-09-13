@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import AppError from "../../errors/AppError";
 import { AccountStatus, IAuthProvider } from "../user/user.interface";
 import User from "../user/user.model";
@@ -115,11 +113,6 @@ const setPassword = async (userId: string, password: string) => {
   return null;
 };
 
-// Reset password
-const resetPassword = async () => {
-  return null;
-};
-
 // Change password
 const changePassword = async (
   decodedToken: JwtPayload,
@@ -127,11 +120,15 @@ const changePassword = async (
   newPassword: string
 ) => {
   const user = await User.findById(decodedToken?.userId);
+  // Check if user exists
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
 
   // Compare old password with database stored password
   const isPasswordMatched = await bcrypt.compare(
     oldPassword,
-    user!.password as string
+    user.password as string
   );
 
   // Check if old password matches
@@ -140,11 +137,11 @@ const changePassword = async (
   }
 
   // Hash the new password and save to database
-  user!.password = await bcrypt.hash(
+  user.password = await bcrypt.hash(
     newPassword,
     parseInt(envVars.BCRYPT_SALT_ROUNDS)
   );
-  user!.save();
+  user.save();
 
   return null;
 };
@@ -184,20 +181,49 @@ const forgotPassword = async (email: string) => {
     );
   }
 
-  // generate reset token
+  // Generate reset token
   const resetToken = generateResetToken(user);
 
+  // Send password reset email
   sendEmail({
     to: user.email,
     subject: "Password Reset Request",
     templateName: "forgotPassword",
     templateData: {
       name: user.name,
-      expiryTime: 10,
+      expiryTime: "10 minutes",
       companyName: "Wandora",
-      resetLink: `${envVars.FRONTEND_URL}/reset-password?token=${resetToken}`,
+      resetLink: `${envVars.FRONTEND_URL}/reset-password?id=${user._id}&accessToken=${resetToken}`,
     },
   });
+
+  return null;
+};
+
+// Reset password
+const resetPassword = async (
+  userId: string,
+  id: string,
+  newPassword: string
+) => {
+  // Check if userId from token matches id from query
+  if (userId !== id) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Invalid user");
+  }
+
+  // Check if user exists
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  // Hash the new password and save to database
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    parseInt(envVars.BCRYPT_SALT_ROUNDS)
+  );
+  user.password = hashedPassword;
+  await user.save();
 
   return null;
 };
@@ -206,9 +232,9 @@ const forgotPassword = async (email: string) => {
 const authService = {
   regenerateAccessToken,
   setPassword,
-  resetPassword,
   changePassword,
   forgotPassword,
+  resetPassword,
 };
 
 export default authService;

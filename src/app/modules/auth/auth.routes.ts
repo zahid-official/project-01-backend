@@ -5,6 +5,7 @@ import authController from "./auth.controller";
 import {
   changePasswordZodSchema,
   forgotPasswordZodSchema,
+  resetPasswordZodSchema,
   setPasswordZodSchema,
 } from "./auth.validation";
 import validateToken from "../../middlewares/validateToken";
@@ -37,11 +38,6 @@ router.patch(
   authController.setPassword
 );
 router.patch(
-  "/reset-password",
-  validateToken(...Object.values(Role)),
-  authController.resetPassword
-);
-router.patch(
   "/change-password",
   validateToken(...Object.values(Role)),
   validateSchema(changePasswordZodSchema),
@@ -51,6 +47,12 @@ router.patch(
   "/forgot-password",
   validateSchema(forgotPasswordZodSchema),
   authController.forgotPassword
+);
+router.patch(
+  "/reset-password",
+  validateToken(...Object.values(Role)),
+  validateSchema(resetPasswordZodSchema),
+  authController.resetPassword
 );
 
 // Export auth routes
