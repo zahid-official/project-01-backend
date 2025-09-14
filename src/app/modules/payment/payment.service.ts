@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from "../../errors/AppError";
 import Booking from "../booking/booking.model";
-import { PaymentStatus } from "./payment.interface";
+import { IPayment, PaymentStatus } from "./payment.interface";
 import httpStatus from "http-status-codes";
 import Payment from "./payment.model";
 import { BookingStatus } from "../booking/booking.interface";
 import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
 import SSLService from "../sslCommerz/sslCommerz.service";
+import generatePdf, { IInvoiceData } from "../../utils/generatePdf";
+import { sendEmail } from "../../utils/sendEmail";
 
 // Successful payment handler
 const successPayment = async (transactionId: string) => {
@@ -36,8 +38,9 @@ const successPayment = async (transactionId: string) => {
       { status: BookingStatus.COMPLETED },
       { new: true, runValidators: true, session }
     )
-      .populate("userId", "name email")
-      .populate("tourId", "title");
+      .populate("userId", "name email phone address")
+      .populate("tourId", "title cost")
+      .populate("paymentId", "transactionId");
 
     // Check if booking record exists
     if (!modifiedBooking) {
@@ -46,6 +49,43 @@ const successPayment = async (transactionId: string) => {
         "Booking record not found for the given payment"
       );
     }
+
+    // Invoice data preparation
+    const user = modifiedBooking.userId as any;
+    const tour = modifiedBooking.tourId as any;
+    const payment = modifiedBooking.paymentId as unknown as IPayment;
+
+    const invoiceData: IInvoiceData = {
+      cost: tour.cost,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      tourTitle: tour.title,
+      guests: modifiedBooking.guests,
+      amount: modifiedPayment.amount,
+      status: modifiedPayment.status,
+      transactionId: payment.transactionId,
+      paymentDate: (modifiedPayment.createdAt as Date)
+        .toISOString()
+        .split("T")[0],
+    };
+    const pdfBuffer = await generatePdf(invoiceData);
+
+    // Send invoice email to user
+    await sendEmail({
+      to: user.email,
+      subject: "Invoice for Your Recent Booking",
+      templateName: "sendInvoice",
+      templateData: invoiceData,
+      attachments: [
+        {
+          filename: "invoice.pdf",
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ],
+    });
 
     // Commit transaction and end session
     await session.commitTransaction();

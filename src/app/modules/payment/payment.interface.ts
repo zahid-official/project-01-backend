@@ -17,4 +17,5 @@ export interface IPayment {
   paymentGateway?: any;
   invoiceUrl?: string;
   status: PaymentStatus;
+  createdAt?: Date;
 }
