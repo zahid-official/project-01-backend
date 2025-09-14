@@ -4,7 +4,7 @@ import { createClient } from "redis";
 import envVars from "./env";
 
 // Create and configure Redis client
-const redisClient = createClient({
+export const redisClient = createClient({
   username: envVars.RADIS.USERNAME,
   password: envVars.RADIS.PASSWORD,
   socket: {
@@ -15,7 +15,7 @@ const redisClient = createClient({
 
 // Handle Redis client errors
 redisClient.on("error", (error) => {
-  console.log("Redis client error", error);
+  console.error("Redis client error", error);
 });
 
 // Connect to Redis

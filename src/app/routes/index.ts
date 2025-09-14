@@ -6,6 +6,7 @@ import tourTypeRoutes from "../modules/tourType/tourType.routes";
 import divisionRoutes from "../modules/division/division.routes";
 import bookingRoutes from "../modules/booking/booking.routes";
 import paymentRoutes from "../modules/payment/payment.routes";
+import otpRoutes from "../modules/otp/otp.routes";
 
 // Initialize main router
 const router = Router();
@@ -39,6 +40,10 @@ const moduleRoutes = [
   {
     path: "/payment",
     route: paymentRoutes,
+  },
+  {
+    path: "/otp",
+    route: otpRoutes,
   },
 ];
 
