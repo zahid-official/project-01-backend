@@ -9,6 +9,7 @@ import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
 import SSLService from "../sslCommerz/sslCommerz.service";
 import generatePdf, { IInvoiceData } from "../../utils/generatePdf";
 import { sendEmail } from "../../utils/sendEmail";
+import { uploadBufferToCloudinary } from "../../config/cloudinary";
 
 // Successful payment handler
 const successPayment = async (transactionId: string) => {
@@ -71,6 +72,34 @@ const successPayment = async (transactionId: string) => {
         .split("T")[0],
     };
     const pdfBuffer = await generatePdf(invoiceData);
+
+    const cloudinaryResult = await uploadBufferToCloudinary(
+      pdfBuffer,
+      "invoice"
+    );
+
+    // Check if upload to Cloudinary was successful
+    if (!cloudinaryResult) {
+      throw new AppError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        "Failed to upload invoice to Cloudinary"
+      );
+    }
+
+    // Check if secure_url is present in the Cloudinary response
+    if (!cloudinaryResult.secure_url) {
+      throw new AppError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        "Cloudinary did not return a secure URL for the uploaded invoice"
+      );
+    }
+
+    // Update payment record with invoice URL
+    await Payment.findByIdAndUpdate(
+      modifiedPayment._id,
+      { invoiceUrl: cloudinaryResult.secure_url },
+      { runValidators: true, session }
+    );
 
     // Send invoice email to user
     await sendEmail({
