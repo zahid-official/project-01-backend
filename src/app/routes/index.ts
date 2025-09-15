@@ -7,6 +7,7 @@ import divisionRoutes from "../modules/division/division.routes";
 import bookingRoutes from "../modules/booking/booking.routes";
 import paymentRoutes from "../modules/payment/payment.routes";
 import otpRoutes from "../modules/otp/otp.routes";
+import statsRoutes from "../modules/stats/stats.routes";
 
 // Initialize main router
 const router = Router();
@@ -47,7 +48,7 @@ const moduleRoutes = [
   },
   {
     path: "/stat",
-    route: otpRoutes,
+    route: statsRoutes,
   },
 ];
 
