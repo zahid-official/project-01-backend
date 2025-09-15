@@ -45,6 +45,10 @@ const moduleRoutes = [
     path: "/otp",
     route: otpRoutes,
   },
+  {
+    path: "/stat",
+    route: otpRoutes,
+  },
 ];
 
 // Register all routes
