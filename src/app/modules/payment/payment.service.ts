@@ -11,6 +11,32 @@ import generatePdf, { IInvoiceData } from "../../utils/generatePdf";
 import { sendEmail } from "../../utils/sendEmail";
 import { uploadBufferToCloudinary } from "../../config/cloudinary";
 
+// Get invoice service
+const getInvoice = async (paymentId: string, userId: string) => {
+  const payment = await Payment.findById(paymentId);
+
+  // Check if payment exists and belongs to the user
+  if (!payment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  // Check if booking exists and belongs to the user
+  const booking = await Booking.findById(payment.bookingId).select("userId");
+  if (!booking || booking.userId.toString() !== userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not authorized to access this invoice"
+    );
+  }
+
+  // Check if invoice URL exists
+  if (!payment.invoiceUrl) {
+    throw new AppError(httpStatus.NOT_FOUND, "Invoice not available");
+  }
+
+  return { invoiceUrl: payment.invoiceUrl };
+};
+
 // Successful payment handler
 const successPayment = async (transactionId: string) => {
   // Start a session for transaction
@@ -243,6 +269,7 @@ const paymentService = {
   failedPayment,
   canceledPayment,
   completePayment,
+  getInvoice,
 };
 
 export default paymentService;

@@ -6,6 +6,23 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import envVars from "../../config/env";
 
+// Get invoice handler
+const getInvoice = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const paymentId = req?.params?.paymentId;
+    const userId = req?.decodedToken?.userId;
+    const result = await paymentService.getInvoice(paymentId, userId);
+
+    // Send response
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Invoice retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 // Success payment handler
 const successPayment = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -79,6 +96,7 @@ const paymentController = {
   failedPayment,
   canceledPayment,
   completePayment,
+  getInvoice,
 };
 
 export default paymentController;
