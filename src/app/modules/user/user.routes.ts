@@ -15,11 +15,15 @@ router.get(
   userController.getAllUsers
 );
 router.get(
+  "/:id",
+  validateToken(Role.ADMIN, Role.SUPER_ADMIN),
+  userController.getSingleUser
+);
+router.get(
   "/profile",
   validateToken(...Object.values(Role)),
   userController.getProfileInfo
 );
-router.get("/:id", userController.getSingleUser);
 
 // Post routes
 router.post(

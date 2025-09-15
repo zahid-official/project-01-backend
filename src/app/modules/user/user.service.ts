@@ -31,15 +31,15 @@ const getAllUsers = async (query: Record<string, string>) => {
   };
 };
 
-// Get profile info
-const getProfileInfo = async (userId: string) => {
-  const user = await User.findById(userId).select("-password");
-  return user;
-};
-
 // Get single user
 const getSingleUser = async (id: string) => {
   const user = await User.findById(id).select("-password");
+  return user;
+};
+
+// Get profile info
+const getProfileInfo = async (userId: string) => {
+  const user = await User.findById(userId).select("-password");
   return user;
 };
 
@@ -86,20 +86,31 @@ const updateUser = async (
   payload: Partial<IUser>,
   decodedToken: JwtPayload
 ) => {
-  // Ensure the user is modifying their own details
+  // Ensure users and guides can only update their own profile
+  if (
+    (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) &&
+    userId !== decodedToken.userId
+  ) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only update your own profile"
+    );
+  }
+
+  // Check if user exists
   const isUserExists = await User.findById(userId);
   if (!isUserExists) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
 
-  // Only super admin can set super admin role
+  // Prevent modification of super admin account by non-super admin users
   if (
-    payload?.role === Role.SUPER_ADMIN &&
+    isUserExists?.role === Role.SUPER_ADMIN &&
     decodedToken.role !== Role.SUPER_ADMIN
   ) {
     throw new AppError(
       httpStatus.FORBIDDEN,
-      "Only super admin can assign super admin role"
+      "You don't have permission to modify super admin account"
     );
   }
 
@@ -122,14 +133,6 @@ const updateUser = async (
     throw new AppError(
       httpStatus.FORBIDDEN,
       "You don't have permission to change account status, delete status or verfication status."
-    );
-  }
-
-  // Hash the password if provided
-  if (payload?.password) {
-    payload.password = await bcrypt.hash(
-      payload.password,
-      parseInt(envVars.BCRYPT_SALT_ROUNDS)
     );
   }
 
