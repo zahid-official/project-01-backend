@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "lint": "pnpm eslint ./src"
+    "lint": "pnpm eslint ./src",
+    "build": "tsc",
+    "start": "node ./dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-local": "^1.0.38",
+    "@types/pdfkit": "^0.17.3",
     "eslint": "^9.33.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.1"
@@ -49,6 +52,8 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
+    "pdfkit": "^0.17.2",
+    "redis": "^5.8.2",
     "zod": "^4.0.17"
   }
 }

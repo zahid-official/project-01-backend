@@ -24,6 +24,7 @@ interface EnvConfig {
     STORE_PASSWORD: string;
     PAYMENT_API: string;
     VALIDATION_API: string;
+    IPN_URL: string;
 
     SUCCESS_BACKEND_URL: string;
     FAILED_BACKEND_URL: string;
@@ -46,6 +47,13 @@ interface EnvConfig {
     SMTP_PASS: string;
     SMTP_USER: string;
     SMTP_FROM: string;
+  };
+
+  RADIS: {
+    HOST: string;
+    PORT: string;
+    USERNAME: string;
+    PASSWORD: string;
   };
 }
 

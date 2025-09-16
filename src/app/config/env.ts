@@ -28,6 +28,7 @@ const loadEnvs = (): EnvConfig => {
     "SSL_STORE_PASSWORD",
     "SSL_PAYMENT_API",
     "SSL_VALIDATION_API",
+    "SSL_IPN_URL",
 
     "SSL_SUCCESS_BACKEND_URL",
     "SSL_FAILED_BACKEND_URL",
@@ -46,6 +47,11 @@ const loadEnvs = (): EnvConfig => {
     "SMTP_PASS",
     "SMTP_USER",
     "SMTP_FROM",
+
+    "RADIS_USERNAME",
+    "RADIS_PASSWORD",
+    "RADIS_HOST",
+    "RADIS_PORT",
   ];
   requiredEnvs.forEach((key) => {
     if (!process.env[key]) {
@@ -80,6 +86,7 @@ const loadEnvs = (): EnvConfig => {
       STORE_PASSWORD: process.env.SSL_STORE_PASSWORD as string,
       PAYMENT_API: process.env.SSL_PAYMENT_API as string,
       VALIDATION_API: process.env.SSL_VALIDATION_API as string,
+      IPN_URL: process.env.SSL_IPN_URL as string,
 
       SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL as string,
       FAILED_BACKEND_URL: process.env.SSL_FAILED_BACKEND_URL as string,
@@ -102,6 +109,13 @@ const loadEnvs = (): EnvConfig => {
       SMTP_PASS: process.env.SMTP_PASS as string,
       SMTP_USER: process.env.SMTP_USER as string,
       SMTP_FROM: process.env.SMTP_FROM as string,
+    },
+
+    RADIS: {
+      HOST: process.env.RADIS_HOST as string,
+      PORT: process.env.RADIS_PORT as string,
+      USERNAME: process.env.RADIS_USERNAME as string,
+      PASSWORD: process.env.RADIS_PASSWORD as string,
     },
   };
 };

@@ -25,22 +25,6 @@ const getAllUsers = catchAsync(
   }
 );
 
-// Get profile info
-const getProfileInfo = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req?.decodedToken?.userId;
-    const result = await userService.getProfileInfo(userId);
-
-    // Send response
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Profile info retrieved successfully",
-      data: result,
-    });
-  }
-);
-
 // Get single user
 const getSingleUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -52,6 +36,22 @@ const getSingleUser = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: "All tourTypes retrieved successfully",
+      data: result,
+    });
+  }
+);
+
+// Get profile info
+const getProfileInfo = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req?.decodedToken?.userId;
+    const result = await userService.getProfileInfo(userId);
+
+    // Send response
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Profile info retrieved successfully",
       data: result,
     });
   }
