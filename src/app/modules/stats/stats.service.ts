@@ -159,12 +159,53 @@ const getBookingStats = async () => {
     { $project: { count: 1, "tour.title": 1, "tour.slug": 1 } },
   ]);
 
-  const [totalBookings, topBookedTours] = await Promise.all([
-    totalBookingsPromise,
-    topBookedToursPromise,
+  const bookingByStatusPromise = Booking.aggregate([
+    { $group: { _id: "$status", count: { $sum: 1 } } },
   ]);
 
-  return { totalBookings, topBookedTours };
+  const avgGuestPerBookingPromise = Booking.aggregate([
+    { $group: { _id: null, avgGuests: { $avg: "$guests" } } },
+  ]);
+
+  const lastWeekBookingsPromise = Booking.countDocuments({
+    createdAt: { $gte: lastWeek },
+  });
+
+  const lastMonthBookingsPromise = Booking.countDocuments({
+    createdAt: { $gte: lastMonth },
+  });
+
+  const bookingByUniqueUsersPromise = Booking.distinct("userId").then(
+    (user) => user.length
+  );
+
+  const [
+    totalBookings,
+    topBookedTours,
+    bookingByStatus,
+    avgGuestPerBooking,
+    lastWeekBookings,
+    lastMonthBookings,
+    bookingByUniqueUsers,
+  ] = await Promise.all([
+    totalBookingsPromise,
+    topBookedToursPromise,
+    bookingByStatusPromise,
+    avgGuestPerBookingPromise,
+    lastWeekBookingsPromise,
+    lastMonthBookingsPromise,
+    bookingByUniqueUsersPromise,
+  ]);
+
+  return {
+    totalBookings,
+    topBookedTours,
+    bookingByStatus,
+    lastWeekBookings,
+    lastMonthBookings,
+    avgGuestPerBooking: avgGuestPerBooking[0]?.avgGuests,
+    bookingByUniqueUsers,
+  };
 };
 
 // Payment stats function
