@@ -90,13 +90,30 @@ const completePayment = catchAsync(
   }
 );
 
+// Validate payment handler
+const validatePayment = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const body = req?.body;
+    const result = await paymentService.validatePayment(body);
+
+    // Send response
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Payment validated successfully",
+      data: result,
+    });
+  }
+);
+
 // Payment controller object
 const paymentController = {
+  getInvoice,
   successPayment,
   failedPayment,
   canceledPayment,
   completePayment,
-  getInvoice,
+  validatePayment,
 };
 
 export default paymentController;

@@ -28,6 +28,7 @@ const loadEnvs = (): EnvConfig => {
     "SSL_STORE_PASSWORD",
     "SSL_PAYMENT_API",
     "SSL_VALIDATION_API",
+    "SSL_IPN_URL",
 
     "SSL_SUCCESS_BACKEND_URL",
     "SSL_FAILED_BACKEND_URL",
@@ -85,6 +86,7 @@ const loadEnvs = (): EnvConfig => {
       STORE_PASSWORD: process.env.SSL_STORE_PASSWORD as string,
       PAYMENT_API: process.env.SSL_PAYMENT_API as string,
       VALIDATION_API: process.env.SSL_VALIDATION_API as string,
+      IPN_URL: process.env.SSL_IPN_URL as string,
 
       SUCCESS_BACKEND_URL: process.env.SSL_SUCCESS_BACKEND_URL as string,
       FAILED_BACKEND_URL: process.env.SSL_FAILED_BACKEND_URL as string,

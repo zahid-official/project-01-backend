@@ -24,6 +24,7 @@ interface EnvConfig {
     STORE_PASSWORD: string;
     PAYMENT_API: string;
     VALIDATION_API: string;
+    IPN_URL: string;
 
     SUCCESS_BACKEND_URL: string;
     FAILED_BACKEND_URL: string;

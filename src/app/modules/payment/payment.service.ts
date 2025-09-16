@@ -263,13 +263,21 @@ const completePayment = async (bookingId: string) => {
   };
 };
 
+// Validate sslCommerz payment
+const validatePayment = async (payload: any) => {
+  await SSLService.validatePayment(payload);
+
+  return null;
+};
+
 // Payment service object
 const paymentService = {
+  getInvoice,
   successPayment,
   failedPayment,
   canceledPayment,
   completePayment,
-  getInvoice,
+  validatePayment,
 };
 
 export default paymentService;
