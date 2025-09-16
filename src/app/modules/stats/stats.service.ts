@@ -2,6 +2,8 @@ import Tour from "../tour/tour.model";
 import User from "../user/user.model";
 import { AccountStatus } from "../user/user.interface";
 import Booking from "../booking/booking.model";
+import Payment from "../payment/payment.model";
+import { PaymentStatus } from "../payment/payment.interface";
 
 // Constants for date calculations
 const today = new Date();
@@ -210,7 +212,48 @@ const getBookingStats = async () => {
 
 // Payment stats function
 const getPaymentStats = async () => {
-  return;
+  const totalPaymentPromise = Payment.countDocuments();
+  const totalRevenuePromise = Payment.aggregate([
+    // Group by payment status
+    { $match: { status: PaymentStatus.PAID } },
+    { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
+  ]);
+  const avgPaymentAmountPromise = Payment.aggregate([
+    { $group: { _id: null, avgAmount: { $avg: "$amount" } } },
+  ]);
+  const paymentByStatusPromise = Payment.aggregate([
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
+  const paymentGatewayPromise = Payment.aggregate([
+    {
+      $group: {
+        _id: { $ifNull: ["$paymentGateway.status", "UNKNOWN"] },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const [
+    totalPayment,
+    totalRevenue,
+    avgPaymentAmount,
+    paymentByStatus,
+    paymentGateway,
+  ] = await Promise.all([
+    totalPaymentPromise,
+    totalRevenuePromise,
+    avgPaymentAmountPromise,
+    paymentByStatusPromise,
+    paymentGatewayPromise,
+  ]);
+
+  return {
+    totalPayment,
+    totalRevenue: totalRevenue[0]?.totalAmount,
+    avgPaymentAmount: avgPaymentAmount[0]?.avgAmount,
+    paymentByStatus,
+    paymentGateway,
+  };
 };
 
 // Stat service object
