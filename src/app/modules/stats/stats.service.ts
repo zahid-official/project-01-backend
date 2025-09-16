@@ -1,5 +1,7 @@
-import { AccountStatus } from "../user/user.interface";
+import Tour from "../tour/tour.model";
 import User from "../user/user.model";
+import { AccountStatus } from "../user/user.interface";
+import Booking from "../booking/booking.model";
 
 // Constants for date calculations
 const today = new Date();
@@ -13,7 +15,7 @@ lastMonth.setMonth(today.getMonth() - 1);
 // User stats function
 const getUserStats = async () => {
   // Get counts of users by various criteria
-  const allUsersPromise = User.countDocuments();
+  const totalUsersPromise = User.countDocuments();
   const activeUsersPromise = User.countDocuments({
     accountStatus: AccountStatus.ACTIVE,
   });
@@ -39,7 +41,7 @@ const getUserStats = async () => {
 
   // Await all promises
   const [
-    allUsers,
+    totalUsers,
     activeUsers,
     inactiveUsers,
     blockedUsers,
@@ -47,7 +49,7 @@ const getUserStats = async () => {
     newUsersLastMonth,
     usersByRole,
   ] = await Promise.all([
-    allUsersPromise,
+    totalUsersPromise,
     activeUsersPromise,
     inactiveUsersPromise,
     blockedUsersPromise,
@@ -57,7 +59,7 @@ const getUserStats = async () => {
   ]);
 
   return {
-    allUsers,
+    totalUsers,
     activeUsers,
     inactiveUsers,
     blockedUsers,
@@ -69,12 +71,100 @@ const getUserStats = async () => {
 
 // Tour stats function
 const getTourStats = async () => {
-  return;
+  const totalToursPromise = Tour.countDocuments();
+  const toursByTourTypePromise = Tour.aggregate([
+    // stage - 1: Join with tourType collection
+    {
+      $lookup: {
+        from: "tourTypeCollection",
+        localField: "tourTypeId",
+        foreignField: "_id",
+        as: "tourType",
+      },
+    },
+
+    // stage - 2: Unwind the joined array
+    { $unwind: "$tourType" },
+
+    // stage - 3: Group by tour type name and count
+    { $group: { _id: "$tourType.name", count: { $sum: 1 } } },
+  ]);
+
+  const toursByDivisionPromise = Tour.aggregate([
+    // stage - 1: Join with division collection
+    {
+      $lookup: {
+        from: "divisionCollection",
+        localField: "divisionId",
+        foreignField: "_id",
+        as: "division",
+      },
+    },
+
+    // stage - 2: Unwind the joined array
+    { $unwind: "$division" },
+
+    // stage - 3: Group by division name and count
+    { $group: { _id: "$division.name", count: { $sum: 1 } } },
+  ]);
+
+  const averageTourCostPromise = Tour.aggregate([
+    // stage - 1: Group all documents to calculate average cost
+    { $group: { _id: null, averageCost: { $avg: "$cost" } } },
+  ]);
+  // Await all promises
+  const [totalTours, toursByTourType, toursByDivision, averageTourCost] =
+    await Promise.all([
+      totalToursPromise,
+      toursByTourTypePromise,
+      toursByDivisionPromise,
+      averageTourCostPromise,
+    ]);
+
+  return {
+    totalTours,
+    toursByTourType,
+    toursByDivision,
+    averageTourCost,
+  };
 };
 
 // Booking stats function
 const getBookingStats = async () => {
-  return;
+  const totalBookingsPromise = Booking.countDocuments();
+  const topBookedToursPromise = Booking.aggregate([
+    // stage - 1: Group by tour name and count
+    { $group: { _id: "$tourId", count: { $sum: 1 } } },
+
+    // stage - 2: Sort by count in descending order
+    { $sort: { count: -1 } },
+
+    // stage - 3: Limit to top 5
+    { $limit: 5 },
+
+    // stage - 4: Join with tour collection to get tour details
+    {
+      $lookup: {
+        from: "tourCollection",
+        let: { tourId: "$_id" },
+        pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$tourId"] } } }],
+        as: "tour",
+      },
+    },
+
+    // stage - 5: Unwind the joined array
+    { $unwind: "$tour" },
+
+    // stage - 6: Project the desired fields
+    { $project: { count: 1, "tour.title": 1, "tour.slug": 1 } },
+  ]);
+
+  const [totalBookings, topBookedTours] = await Promise.all([
+    totalBookingsPromise,
+    topBookedToursPromise,
+  ]);
+
+  return { totalBookings, topBookedTours };
 };
 
 // Payment stats function
