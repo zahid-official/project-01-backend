@@ -1,12 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from "../../errors/AppError";
 import Booking from "../booking/booking.model";
-import { PaymentStatus } from "./payment.interface";
+import { IPayment, PaymentStatus } from "./payment.interface";
 import httpStatus from "http-status-codes";
 import Payment from "./payment.model";
 import { BookingStatus } from "../booking/booking.interface";
 import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
 import SSLService from "../sslCommerz/sslCommerz.service";
+import generatePdf, { IInvoiceData } from "../../utils/generatePdf";
+import { sendEmail } from "../../utils/sendEmail";
+import { uploadBufferToCloudinary } from "../../config/cloudinary";
+
+// Get invoice service
+const getInvoice = async (paymentId: string, userId: string) => {
+  const payment = await Payment.findById(paymentId);
+
+  // Check if payment exists and belongs to the user
+  if (!payment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  // Check if booking exists and belongs to the user
+  const booking = await Booking.findById(payment.bookingId).select("userId");
+  if (!booking || booking.userId.toString() !== userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not authorized to access this invoice"
+    );
+  }
+
+  // Check if invoice URL exists
+  if (!payment.invoiceUrl) {
+    throw new AppError(httpStatus.NOT_FOUND, "Invoice not available");
+  }
+
+  return { invoiceUrl: payment.invoiceUrl };
+};
 
 // Successful payment handler
 const successPayment = async (transactionId: string) => {
@@ -36,8 +65,9 @@ const successPayment = async (transactionId: string) => {
       { status: BookingStatus.COMPLETED },
       { new: true, runValidators: true, session }
     )
-      .populate("userId", "name email")
-      .populate("tourId", "title");
+      .populate("userId", "name email phone address")
+      .populate("tourId", "title cost")
+      .populate("paymentId", "transactionId");
 
     // Check if booking record exists
     if (!modifiedBooking) {
@@ -46,6 +76,71 @@ const successPayment = async (transactionId: string) => {
         "Booking record not found for the given payment"
       );
     }
+
+    // Invoice data preparation
+    const user = modifiedBooking.userId as any;
+    const tour = modifiedBooking.tourId as any;
+    const payment = modifiedBooking.paymentId as unknown as IPayment;
+
+    const invoiceData: IInvoiceData = {
+      cost: tour.cost,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      tourTitle: tour.title,
+      guests: modifiedBooking.guests,
+      amount: modifiedPayment.amount,
+      status: modifiedPayment.status,
+      transactionId: payment.transactionId,
+      paymentDate: (modifiedPayment.createdAt as Date)
+        .toISOString()
+        .split("T")[0],
+    };
+    const pdfBuffer = await generatePdf(invoiceData);
+
+    const cloudinaryResult = await uploadBufferToCloudinary(
+      pdfBuffer,
+      "invoice"
+    );
+
+    // Check if upload to Cloudinary was successful
+    if (!cloudinaryResult) {
+      throw new AppError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        "Failed to upload invoice to Cloudinary"
+      );
+    }
+
+    // Check if secure_url is present in the Cloudinary response
+    if (!cloudinaryResult.secure_url) {
+      throw new AppError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        "Cloudinary did not return a secure URL for the uploaded invoice"
+      );
+    }
+
+    // Update payment record with invoice URL
+    await Payment.findByIdAndUpdate(
+      modifiedPayment._id,
+      { invoiceUrl: cloudinaryResult.secure_url },
+      { runValidators: true, session }
+    );
+
+    // Send invoice email to user
+    await sendEmail({
+      to: user.email,
+      subject: "Invoice for Your Recent Booking",
+      templateName: "sendInvoice",
+      templateData: invoiceData,
+      attachments: [
+        {
+          filename: "invoice.pdf",
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ],
+    });
 
     // Commit transaction and end session
     await session.commitTransaction();
@@ -168,12 +263,21 @@ const completePayment = async (bookingId: string) => {
   };
 };
 
+// Validate sslCommerz payment
+const validatePayment = async (payload: any) => {
+  await SSLService.validatePayment(payload);
+
+  return null;
+};
+
 // Payment service object
 const paymentService = {
+  getInvoice,
   successPayment,
   failedPayment,
   canceledPayment,
   completePayment,
+  validatePayment,
 };
 
 export default paymentService;

@@ -185,14 +185,14 @@ const forgotPassword = async (email: string) => {
   const resetToken = generateResetToken(user);
 
   // Send password reset email
-  sendEmail({
+  await sendEmail({
     to: user.email,
     subject: "Password Reset Request",
     templateName: "forgotPassword",
     templateData: {
       name: user.name,
-      expiryTime: "10 minutes",
       companyName: "Wandora",
+      expiryTime: "10 minutes",
       resetLink: `${envVars.FRONTEND_URL}/reset-password?id=${user._id}&accessToken=${resetToken}`,
     },
   });

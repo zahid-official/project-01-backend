@@ -77,25 +77,6 @@ export const updateUserZodSchema = z.object({
     .trim()
     .optional(),
 
-  // Password
-  password: z
-    .string({ error: "Password must be string" })
-    .min(8, { error: "Password must be at least 8 characters long." })
-    .trim()
-
-    // Password complexity requirements
-    .regex(/^(?=.*[A-Z])/, {
-      error: "Password must contain at least 1 uppercase letter.",
-    })
-    .regex(/^(?=.*[!@#$%^&*])/, {
-      error: "Password must contain at least 1 special character.",
-    })
-    .regex(/^(?=.*\d)/, {
-      error: "Password must contain at least 1 number.",
-    })
-    .trim()
-    .optional(),
-
   // Phone
   phone: z
     .string({ error: "Phone Number must be string" })

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        font-family: Helvetica, Arial, sans-serif;
+        color: #000;
+      }
+
+      .wrapper {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 50px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #ecf0f1;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      /* heading */
+      h1 {
+        font-size: 42px;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+      }
+
+      /* date & transactionId  */
+      .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .col {
+        width: 48%;
+      }
+
+      .label {
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .value {
+        font-size: 12px;
+      }
+
+      /* Billing from/to */
+      .section-title {
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .info p {
+        font-size: 12px;
+      }
+
+      /* Table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 40px;
+        font-size: 12px;
+      }
+
+      thead tr {
+        background: #e5e7eb;
+      }
+
+      th {
+        text-align: center;
+        padding: 7px 10px;
+        font-weight: 700;
+      }
+
+      td {
+        text-align: center;
+        padding: 7px 10px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .total-row td {
+        font-weight: 700;
+      }
+
+      .footer-info {
+        margin-top: 40px;
+        font-size: 12px;
+      }
+
+      .footer-note {
+        margin-top: 5px;
+        font-size: 12px;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .wrapper {
+          padding: 20px;
+        }
+
+        .col {
+          width: 100%;
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Header -->
+      <h1>INVOICE</h1>
+
+      <!-- Date + Transaction -->
+      <div class="row">
+        <div class="col">
+          <p class="label">Date of Payment:</p>
+          <p class="value"><%= paymentDate %></p>
+        </div>
+        <div class="col">
+          <p class="label">Transaction ID:</p>
+          <p class="value"><%= transactionId %></p>
+        </div>
+      </div>
+
+      <!-- Billed To / From -->
+      <div class="row">
+        <div class="col">
+          <p class="section-title">Billed to:</p>
+          <div class="info">
+            <p><%= name %></p>
+            <p><%= email %></p>
+            <p><%= phone %></p>
+            <p><%= address %></p>
+          </div>
+        </div>
+        <div class="col">
+          <p class="section-title">From:</p>
+          <div class="info">
+            <p>Wandora Ltd.</p>
+            <p>01958769425</p>
+            <p>support@wandora.com</p>
+            <p>Uttara, Dhaka, Bangladesh</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <table>
+        <thead>
+          <tr>
+            <th>Tour Title</th>
+            <th>Guest</th>
+            <th>Per Person</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= tourTitle %></td>
+            <td><%= guests %></td>
+            <td>$<%= cost %></td>
+            <td>$<%= amount %></td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="2"></td>
+            <td>Total =</td>
+            <td>$<%= amount %></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Footer info -->
+      <p class="footer-info"><strong>Payment status: </strong> <%= status %></p>
+      <p class="footer-note">
+        <strong>Note:</strong> Thank you for choosing Wandora!
+      </p>
+    </div>
+  </body>
+</html>
