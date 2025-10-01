@@ -38,7 +38,6 @@ const sendOtp = async (email: string) => {
     subject: "OTP code for verification",
     templateName: "sendOtp",
     templateData: {
-      name: name,
       otpCode: otp,
       companyName: "Wandora",
       expiryTime: "2 minutes",
