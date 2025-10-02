@@ -15,7 +15,7 @@ router.get(
   userController.getAllUsers
 );
 router.get(
-  "/:id",
+  "/singleUser/:id",
   validateToken(Role.ADMIN, Role.SUPER_ADMIN),
   userController.getSingleUser
 );
