@@ -40,7 +40,7 @@ passport.use(
         let user = await User.findOne({ email });
 
         // Check if user is verified
-        if (!user?.isVerified) {
+        if (user && !user?.isVerified) {
           return done(null, false, {
             message: `User is not verified. Please verify your email to proceed.`,
           });
@@ -48,8 +48,9 @@ passport.use(
 
         // Check if user is blocked or inactive
         if (
-          user?.accountStatus === AccountStatus.BLOCKED ||
-          user?.accountStatus === AccountStatus.INACTIVE
+          user &&
+          (user?.accountStatus === AccountStatus.BLOCKED ||
+            user?.accountStatus === AccountStatus.INACTIVE)
         ) {
           return done(null, false, {
             message: `User is ${user.accountStatus}. Please contact support for more information.`,
@@ -57,7 +58,7 @@ passport.use(
         }
 
         // Check if user is deleted
-        if (user?.isDeleted) {
+        if (user && user?.isDeleted) {
           return done(null, false, {
             message: `User is deleted. Please contact support for more information.`,
           });
@@ -106,7 +107,7 @@ passport.use(
         }
 
         // Check if user is verified
-        if (!user.isVerified) {
+        if (!user?.isVerified) {
           return done(null, false, {
             message: `User is not verified. Please verify your email to proceed.`,
           });
@@ -114,8 +115,8 @@ passport.use(
 
         // Check if user is blocked or inactive
         if (
-          user.accountStatus === AccountStatus.BLOCKED ||
-          user.accountStatus === AccountStatus.INACTIVE
+          user?.accountStatus === AccountStatus.BLOCKED ||
+          user?.accountStatus === AccountStatus.INACTIVE
         ) {
           return done(null, false, {
             message: `User is ${user.accountStatus}. Please contact support for more information.`,
@@ -123,17 +124,17 @@ passport.use(
         }
 
         // Check if user is deleted
-        if (user.isDeleted) {
+        if (user?.isDeleted) {
           return done(null, false, {
             message: `User is deleted. Please contact support for more information.`,
           });
         }
 
         // Check user authentication method
-        const googleAuthenticated = user.auths?.some(
+        const googleAuthenticated = user?.auths?.some(
           (auth) => auth.provider === "google"
         );
-        if (googleAuthenticated && !user.password) {
+        if (googleAuthenticated && !user?.password) {
           return done(null, false, {
             message:
               "Please log in with Google first and set a password to enable email login.",
