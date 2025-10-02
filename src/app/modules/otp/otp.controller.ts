@@ -9,8 +9,8 @@ import sendResponse from "../../utils/sendResponse";
 // Send otp
 const sendOtp = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-       const email = req?.body?.email;
-       const result = await otpService.sendOtp(email);
+    const email = req?.body?.email;
+    const result = await otpService.sendOtp(email);
 
     // Send response
     sendResponse(res, {
