@@ -6,7 +6,7 @@ import User from "../user/user.model";
 import httpStatus from "http-status-codes";
 
 // Send otp
-const sendOtp = async (name: string, email: string) => {
+const sendOtp = async (email: string) => {
   const user = await User.findOne({ email });
 
   // Check if user exists
@@ -38,7 +38,6 @@ const sendOtp = async (name: string, email: string) => {
     subject: "OTP code for verification",
     templateName: "sendOtp",
     templateData: {
-      name: name,
       otpCode: otp,
       companyName: "Wandora",
       expiryTime: "2 minutes",
