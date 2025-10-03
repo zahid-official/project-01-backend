@@ -31,9 +31,7 @@ const getAllTourTypes = async (query: Record<string, string>) => {
 // Get single tour
 const getSingleTourType = async (id: string) => {
   const tour = await TourType.findById(id);
-  return {
-    data: tour,
-  };
+  return tour;
 };
 
 // Create new tourType

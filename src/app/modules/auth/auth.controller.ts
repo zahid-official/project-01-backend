@@ -59,7 +59,7 @@ const credentialsLogin = catchAsync(
       sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
-        message: "Credentials login successful",
+        message: "Logged in successfully",
         data: result,
       });
     })(req, res, next);
@@ -117,7 +117,7 @@ const logout = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "User logged out successfully",
+      message: "Logged out successfully",
       data: null,
     });
   }

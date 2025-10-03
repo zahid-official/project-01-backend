@@ -36,8 +36,8 @@ const getSingleDivision = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "All divisions retrieved successfully",
-      data: result.data,
+      message: "Division retrieved successfully",
+      data: result,
     });
   }
 );
