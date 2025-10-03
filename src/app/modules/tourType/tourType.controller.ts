@@ -35,8 +35,8 @@ const getSingleTourType = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "All tourTypes retrieved successfully",
-      data: result.data,
+      message: "TourType retrieved successfully",
+      data: result,
     });
   }
 );

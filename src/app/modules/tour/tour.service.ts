@@ -31,9 +31,7 @@ const getAllTours = async (query: Record<string, string>) => {
 // Get single tour
 const getSingleTour = async (slug: string) => {
   const tour = await Tour.findOne({ slug });
-  return {
-    data: tour,
-  };
+  return tour;
 };
 
 // Create new tour

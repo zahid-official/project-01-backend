@@ -39,7 +39,7 @@ const getMyBookings = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "User bookings retrieved successfully",
+      message: "Bookings retrieved successfully",
       data: result.data,
       meta: result.meta,
     });
