@@ -31,9 +31,7 @@ const getAllDivisions = async (query: Record<string, string>) => {
 // Get single division
 const getSingleDivision = async (slug: string) => {
   const division = await Division.findOne({ slug });
-  return {
-    data: division,
-  };
+  return division;
 };
 
 // Create new division

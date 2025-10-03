@@ -52,19 +52,15 @@ const credentialsLogin = catchAsync(
       setCookies(res, tokens);
 
       // Convert to plain object & remove password before sending response
-      const data = user.toObject();
-      delete data?.password;
+      const result = user.toObject();
+      delete result?.password;
 
       // Send response
       sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
-        message: "Credentials login successful",
-        data: {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          data,
-        },
+        message: "Logged in successfully",
+        data: result,
       });
     })(req, res, next);
   }
@@ -121,7 +117,7 @@ const logout = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "User logged out successfully",
+      message: "Logged out successfully",
       data: null,
     });
   }

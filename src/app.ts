@@ -17,7 +17,7 @@ app.use(
   expressSession({
     secret: envVars.EXPRESS_SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
   })
 );
 app.use(passport.initialize());

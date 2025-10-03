@@ -35,7 +35,7 @@ const getSingleUser = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "All tourTypes retrieved successfully",
+      message: "User retrieved successfully",
       data: result,
     });
   }
@@ -66,7 +66,7 @@ const registerUser = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.CREATED,
-      message: "User created successfully",
+      message: "Account created successfully",
       data: result,
     });
   }
@@ -84,7 +84,7 @@ const updateUser = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "User details updated successfully",
+      message: "Details updated successfully",
       data: result,
     });
   }

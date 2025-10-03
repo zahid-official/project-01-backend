@@ -18,18 +18,18 @@ router.get(
   bookingController.getAllBookings
 );
 
+// Get single booking
+router.get(
+  "/singleBooking/:id",
+  validateToken(...Object.values(Role)),
+  bookingController.getSingleBooking
+);
+
 // Get my bookings
 router.get(
   "/my-bookings",
   validateToken(...Object.values(Role)),
   bookingController.getMyBookings
-);
-
-// Get single booking
-router.get(
-  "/:id",
-  validateToken(...Object.values(Role)),
-  bookingController.getSingleBooking
 );
 
 // Create new booking

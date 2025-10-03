@@ -13,7 +13,7 @@ const sameSiteOption: SameSite =
 
 const cookieOptions = {
   httpOnly: true,
-  secure: envVars.NODE_ENV === "production",
+  secure: true,
   sameSite: sameSiteOption,
 };
 
