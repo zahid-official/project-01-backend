@@ -59,11 +59,16 @@ export const createTourZodSchema = z.object({
     .string({ error: "Start date must be a valid string date format" })
     .transform((value) => new Date(value))
     .refine((date) => !isNaN(date.getTime()), {
-      message: "Invalid date format",
+      error: "Invalid date format",
     })
-    .refine((date) => date >= new Date(), {
-      message: "Start date must be in the future",
-    })
+    .refine(
+      (date) => {
+        const today = new Date();
+        const input = new Date(date);
+        return input.setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0);
+      },
+      { error: "Start date must be today or in the future" }
+    )
     .optional(),
 
   // End Date
@@ -71,11 +76,16 @@ export const createTourZodSchema = z.object({
     .string({ error: "End date must be a valid string date format" })
     .transform((value) => new Date(value))
     .refine((date) => !isNaN(date.getTime()), {
-      message: "Invalid date format",
+      error: "Invalid date format",
     })
-    .refine((date) => date >= new Date(), {
-      message: "End date must be in the future",
-    })
+    .refine(
+      (date) => {
+        const today = new Date();
+        const input = new Date(date);
+        return input.setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0);
+      },
+      { error: "Start date must be today or in the future" }
+    )
     .optional(),
 
   // Images

@@ -33,6 +33,7 @@ const superAdmin = async () => {
       email: envVars.SUPER_ADMIN_EMAIL,
       password: hashedPassword,
       role: Role.SUPER_ADMIN,
+      isVerified: true,
       auths: [authProvider],
     };
 
